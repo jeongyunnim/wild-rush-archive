@@ -21,79 +21,124 @@
   </script>
   <style>
     * { font-family: 'Inter', sans-serif; }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #0f0f0f; }
-    ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+    .sidebar-scroll { scrollbar-width: thin; }
+    .line-clamp-1 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; }
   </style>
 </head>
-<body class="bg-[#0a0a0f] text-[#e0e0e6] min-h-screen">
+<body class="bg-[#0a0a0f] text-[#e0e0e6]">
 
-  <div class="max-w-5xl mx-auto px-4 py-10">
+  <div class="flex h-screen overflow-hidden">
 
-    <!-- Server Header -->
-    <div class="flex items-center gap-4 mb-10 pb-8 border-b border-[#1f1f1f]">
-      {% if guild.icon_url %}
-      <img src="{{ guild.icon_url }}" alt="{{ guild.name }}" class="w-14 h-14 rounded-full object-cover ring-2 ring-[#2a2a2a]">
-      {% else %}
-      <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#4f46e5] to-[#7c3aed] flex items-center justify-center text-xl font-semibold text-white">
-        {{ guild.name[0] }}
-      </div>
-      {% endif %}
-      <div>
-        <h1 class="text-2xl font-semibold text-white tracking-tight">{{ guild.name }}</h1>
-        <p class="text-sm text-[#6b6b7b] mt-0.5">Discord Archive · {{ categories|length }}개 카테고리</p>
-      </div>
-    </div>
+    <!-- Sidebar -->
+    <aside class="w-64 flex-shrink-0 flex flex-col bg-[#0d0d14] border-r border-[#1f1f1f] overflow-hidden">
 
-    <!-- Category Sections -->
-    {% for category, channels in categories.items() %}
-    <div class="mb-10">
-      <!-- Category Header -->
-      <div class="flex items-center gap-2 mb-4">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#52525b]"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
-        <span class="text-xs font-medium text-[#52525b] uppercase tracking-widest">{{ category }}</span>
-        <span class="text-xs text-[#3f3f46]">{{ channels|length }}개 채널</span>
-      </div>
-
-      <!-- Channel Cards -->
-      <div class="grid gap-2">
-        {% for channel in channels %}
-        <a href="/channels/{{ channel.id }}/index.html"
-           class="group flex items-center justify-between p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] hover:bg-[#16161e] transition-all duration-150">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-lg bg-[#1a1a24] border border-[#2a2a2a] flex items-center justify-center flex-shrink-0">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            </div>
-            <div>
-              <p class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">{{ channel.name }}</p>
-              {% if channel.topic %}
-              <p class="text-xs text-[#52525b] mt-0.5 line-clamp-1">{{ channel.topic }}</p>
-              {% endif %}
-            </div>
+      <!-- Server Header -->
+      <div class="px-4 py-4 border-b border-[#1f1f1f]">
+        <div class="flex items-center gap-2.5">
+          {% if guild.icon_url %}
+          <img src="{{ guild.icon_url }}" alt="{{ guild.name }}" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+          {% else %}
+          <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#4f46e5] to-[#7c3aed] flex items-center justify-center text-sm font-semibold text-white flex-shrink-0">
+            {{ guild.name[0] }}
           </div>
-          <div class="flex items-center gap-4 text-xs text-[#52525b]">
-            {% if channel.threads %}
-            <span class="flex items-center gap-1">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-              {{ channel.threads|length }}
-            </span>
-            {% endif %}
-            <span class="flex items-center gap-1">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-              {{ channel.messages|length }}
-            </span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#3f3f46] group-hover:text-[#6b6b7b] group-hover:translate-x-0.5 transition-all"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          {% endif %}
+          <div class="min-w-0">
+            <p class="text-sm font-semibold text-white truncate">{{ guild.name }}</p>
+            <p class="text-[10px] text-[#52525b]">Discord Archive</p>
           </div>
-        </a>
+        </div>
+      </div>
+
+      <!-- Channel List (scrollable) -->
+      <nav class="flex-1 overflow-y-auto sidebar-scroll py-2">
+        {% for category, channels in categories.items() %}
+        <div class="mb-1">
+          <!-- Category Label -->
+          <div class="px-4 py-1.5 flex items-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#3f3f46] flex-shrink-0"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+            <span class="text-[10px] font-semibold text-[#52525b] uppercase tracking-widest">{{ category }}</span>
+          </div>
+
+          <!-- Channels -->
+          {% for channel in channels %}
+          <a href="/channels/{{ channel.id }}/index.html"
+             class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">{{ channel.name }}</span>
+            <span class="ml-auto text-[10px] text-[#3f3f46]">{{ channel.messages|length }}</span>
+          </a>
+          {% endfor %}
+        </div>
         {% endfor %}
-      </div>
-    </div>
-    {% endfor %}
+      </nav>
 
-    <!-- Footer -->
-    <div class="text-center text-xs text-[#3f3f46] py-8 border-t border-[#1f1f1f]">
-      마지막 동기화: {{ rendered_at }} UTC &nbsp;·&nbsp; Generated by Band Archive
-    </div>
+      <!-- Footer -->
+      <div class="px-4 py-3 border-t border-[#1f1f1f]">
+        <p class="text-[10px] text-[#3f3f46]">마지막 동기화<br>{{ rendered_at }} UTC</p>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto">
+      <div class="max-w-5xl mx-auto px-8 py-10">
+
+        <!-- Content Header -->
+        <div class="mb-10 pb-8 border-b border-[#1f1f1f]">
+          <h1 class="text-2xl font-semibold text-white tracking-tight">{{ guild.name }}</h1>
+          <p class="text-sm text-[#6b6b7b] mt-1">{{ categories|length }}개 카테고리 · {{ channels|length }}개 채널</p>
+        </div>
+
+        <!-- Category Sections -->
+        {% for category, channels in categories.items() %}
+        <div class="mb-10">
+          <div class="flex items-center gap-2 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#52525b]"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+            <span class="text-xs font-medium text-[#52525b] uppercase tracking-widest">{{ category }}</span>
+            <span class="text-xs text-[#3f3f46]">{{ channels|length }}개 채널</span>
+          </div>
+
+          <div class="grid gap-2">
+            {% for channel in channels %}
+            <a href="/channels/{{ channel.id }}/index.html"
+               class="group flex items-center justify-between p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] hover:bg-[#16161e] transition-all duration-150">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-[#1a1a24] border border-[#2a2a2a] flex items-center justify-center flex-shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">{{ channel.name }}</p>
+                  {% if channel.topic %}
+                  <p class="text-xs text-[#52525b] mt-0.5 line-clamp-1">{{ channel.topic }}</p>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="flex items-center gap-4 text-xs text-[#52525b]">
+                {% if channel.threads %}
+                <span class="flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                  {{ channel.threads|length }}
+                </span>
+                {% endif %}
+                <span class="flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                  {{ channel.messages|length }}
+                </span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#3f3f46] group-hover:text-[#6b6b7b] group-hover:translate-x-0.5 transition-all"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+
+        <div class="text-center text-xs text-[#3f3f46] py-8 border-t border-[#1f1f1f]">
+          Generated by Band Archive
+        </div>
+      </div>
+    </main>
   </div>
 
 </body>

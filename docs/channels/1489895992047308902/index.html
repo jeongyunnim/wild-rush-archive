@@ -21,89 +21,207 @@
   </script>
   <style>
     * { font-family: 'Inter', sans-serif; }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #0f0f0f; }
-    ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+    .sidebar-scroll { scrollbar-width: thin; }
     .line-clamp-1 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; }
     .line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
   </style>
 </head>
-<body class="bg-[#0a0a0f] text-[#e0e0e6] min-h-screen">
+<body class="bg-[#0a0a0f] text-[#e0e0e6]">
 
-  <div class="max-w-5xl mx-auto px-4 py-8">
+  <div class="flex h-screen overflow-hidden">
 
-    <!-- Breadcrumb -->
-    <nav class="flex items-center gap-2 text-sm text-[#52525b] mb-6">
-      <a href="/index.html" class="hover:text-[#a1a1aa] transition-colors">와일드러시</a>
-      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-      <span class="text-[#d4d4d8]"># 공지방</span>
-    </nav>
+    <!-- Sidebar -->
+    <aside class="w-64 flex-shrink-0 flex flex-col bg-[#0d0d14] border-r border-[#1f1f1f] overflow-hidden">
 
-    <!-- Channel Header -->
-    <div class="flex items-start justify-between mb-8 pb-6 border-b border-[#1f1f1f]">
-      <div>
-        <div class="flex items-center gap-2 mb-1">
-          <span class="text-lg text-[#52525b]">#</span>
-          <h1 class="text-xl font-semibold text-white tracking-tight">공지방</h1>
-        </div>
-        
-        <div class="flex items-center gap-3 mt-3 text-xs text-[#3f3f46]">
-          <span>없음</span>
-          <span>·</span>
-          <span>12개 메시지</span>
+      <!-- Server Header -->
+      <div class="px-4 py-4 border-b border-[#1f1f1f]">
+        <div class="flex items-center gap-2.5">
           
-        </div>
-      </div>
-    </div>
-
-    <!-- Threads Section -->
-    
-
-    <!-- Recent Messages -->
-    
-    <div>
-      <div class="flex items-center gap-2 mb-3">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#52525b]"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-        <span class="text-xs font-medium text-[#52525b] uppercase tracking-widest">최근 메시지</span>
-        <span class="text-xs text-[#3f3f46]">12</span>
-      </div>
-      <div class="space-y-1">
-        
-        <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
+          <img src="https://cdn.discordapp.com/icons/1489894102827794452/0593a61e9794209cfe7ae37253419bc7.png?size=1024" alt="와일드러시" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
           
-          <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
-          
-          <div class="flex-1 min-w-0">
-            <div class="flex items-baseline gap-2">
-              <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
-              <span class="text-xs text-[#3f3f46]">2026-04-04 10:48</span>
-            </div>
-            <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed">📢 공지방 📢
-매니저가 주요 공지 사항을 올리는 공간입니다.
-매니저 외의 멤버는 글 작성이 불가능합니다.</p>
-            
-            
-            <div class="flex flex-wrap gap-1 mt-2">
-              
-              <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
-                👍 <span class="text-[10px]">1</span>
-              </span>
-              
-            </div>
-            
+          <div class="min-w-0">
+            <p class="text-sm font-semibold text-white truncate">와일드러시</p>
+            <p class="text-[10px] text-[#52525b]">Discord Archive</p>
           </div>
         </div>
+      </div>
+
+      <!-- Channel List (scrollable) -->
+      <nav class="flex-1 overflow-y-auto sidebar-scroll py-2">
         
-        <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
+        <div class="mb-1">
+          <div class="px-4 py-1.5 flex items-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#3f3f46] flex-shrink-0"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+            <span class="text-[10px] font-semibold text-[#52525b] uppercase tracking-widest">없음</span>
+          </div>
+
           
-          <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
+          <a href="/channels/1489895992047308902/index.html"
+             class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg transition-colors cursor-pointer bg-[#1a1a24]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d4d4d8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-white group-hover:text-[#d4d4d8] truncate transition-colors">공지방</span>
+            <span class="ml-auto text-[10px] text-[#3f3f46]">12</span>
+          </a>
           
-          <div class="flex-1 min-w-0">
-            <div class="flex items-baseline gap-2">
-              <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
-              <span class="text-xs text-[#3f3f46]">2026-04-04 11:11</span>
+          <a href="/channels/1489896035802153051/index.html"
+             class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg transition-colors cursor-pointer hover:bg-[#1a1a24]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">선곡-수지</span>
+            <span class="ml-auto text-[10px] text-[#3f3f46]">52</span>
+          </a>
+          
+          <a href="/channels/1489896325741805608/index.html"
+             class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg transition-colors cursor-pointer hover:bg-[#1a1a24]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">선곡-인호</span>
+            <span class="ml-auto text-[10px] text-[#3f3f46]">23</span>
+          </a>
+          
+          <a href="/channels/1489896356062564352/index.html"
+             class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg transition-colors cursor-pointer hover:bg-[#1a1a24]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">선곡-성현</span>
+            <span class="ml-auto text-[10px] text-[#3f3f46]">35</span>
+          </a>
+          
+          <a href="/channels/1489939250999853197/index.html"
+             class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg transition-colors cursor-pointer hover:bg-[#1a1a24]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">공지-소통가능방</span>
+            <span class="ml-auto text-[10px] text-[#3f3f46]">21</span>
+          </a>
+          
+          <a href="/channels/1489965483817046147/index.html"
+             class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg transition-colors cursor-pointer hover:bg-[#1a1a24]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">일반</span>
+            <span class="ml-auto text-[10px] text-[#3f3f46]">141</span>
+          </a>
+          
+          <a href="/channels/1489977686343417988/index.html"
+             class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg transition-colors cursor-pointer hover:bg-[#1a1a24]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">합주영상-사진</span>
+            <span class="ml-auto text-[10px] text-[#3f3f46]">6</span>
+          </a>
+          
+          <a href="/channels/1490699203402535082/index.html"
+             class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg transition-colors cursor-pointer hover:bg-[#1a1a24]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">🎧노래-추천🎧</span>
+            <span class="ml-auto text-[10px] text-[#3f3f46]">7</span>
+          </a>
+          
+          <a href="/channels/1491433466947047454/index.html"
+             class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg transition-colors cursor-pointer hover:bg-[#1a1a24]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">🎸기타-방</span>
+            <span class="ml-auto text-[10px] text-[#3f3f46]">83</span>
+          </a>
+          
+          <a href="/channels/1501077542592057374/index.html"
+             class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg transition-colors cursor-pointer hover:bg-[#1a1a24]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">💸회비-관리</span>
+            <span class="ml-auto text-[10px] text-[#3f3f46]">6</span>
+          </a>
+          
+          <a href="/channels/1501080971733237770/index.html"
+             class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg transition-colors cursor-pointer hover:bg-[#1a1a24]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">🖐️합주-리뷰</span>
+            <span class="ml-auto text-[10px] text-[#3f3f46]">0</span>
+          </a>
+          
+        </div>
+        
+      </nav>
+
+      <!-- Footer -->
+      <div class="px-4 py-3 border-t border-[#1f1f1f]">
+        <p class="text-[10px] text-[#3f3f46]">마지막 동기화<br>2026-05-21T14:34:46.901101 UTC</p>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto">
+      <div class="max-w-5xl mx-auto px-8 py-8">
+
+        <!-- Breadcrumb -->
+        <nav class="flex items-center gap-2 text-sm text-[#52525b] mb-6">
+          <a href="/index.html" class="hover:text-[#a1a1aa] transition-colors">와일드러시</a>
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <span class="text-[#d4d4d8]"># 공지방</span>
+        </nav>
+
+        <!-- Channel Header -->
+        <div class="flex items-start justify-between mb-8 pb-6 border-b border-[#1f1f1f]">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-lg text-[#52525b]">#</span>
+              <h1 class="text-xl font-semibold text-white tracking-tight">공지방</h1>
             </div>
-            <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed">**📢 26년 하반기 공연 공지  📢**
+            
+            <div class="flex items-center gap-3 mt-3 text-xs text-[#3f3f46]">
+              <span>없음</span>
+              <span>·</span>
+              <span>12개 메시지</span>
+              
+            </div>
+          </div>
+        </div>
+
+        <!-- Threads Section -->
+        
+
+        <!-- Recent Messages -->
+        
+        <div>
+          <div class="flex items-center gap-2 mb-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#52525b]"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            <span class="text-xs font-medium text-[#52525b] uppercase tracking-widest">최근 메시지</span>
+            <span class="text-xs text-[#3f3f46]">12</span>
+          </div>
+          <div class="space-y-1">
+            
+            <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
+              
+              <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
+              
+              <div class="flex-1 min-w-0">
+                <div class="flex items-baseline gap-2">
+                  <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
+                  <span class="text-xs text-[#3f3f46]">2026-04-04 10:48</span>
+                </div>
+                <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed">📢 공지방 📢
+매니저가 주요 공지 사항을 올리는 공간입니다.
+매니저 외의 멤버는 글 작성이 불가능합니다.</p>
+                
+                
+                <div class="flex flex-wrap gap-1 mt-2">
+                  
+                  <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
+                    👍 <span class="text-[10px]">1</span>
+                  </span>
+                  
+                </div>
+                
+              </div>
+            </div>
+            
+            <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
+              
+              <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
+              
+              <div class="flex-1 min-w-0">
+                <div class="flex items-baseline gap-2">
+                  <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
+                  <span class="text-xs text-[#3f3f46]">2026-04-04 11:11</span>
+                </div>
+                <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed">**📢 26년 하반기 공연 공지  📢**
 ﻿
 와일드러시는 26년 하반기 공연을 목표 하고 있습니다.
 해당 공연은 다른 팀과 함께 하는 공연이 아닌, **와일드러시 단독 공연**입니다.
@@ -113,29 +231,29 @@
 공연 위치 : 미정 (홍대 예상)
 
 .</p>
-            
-            
-            <div class="flex flex-wrap gap-1 mt-2">
-              
-              <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
-                👍 <span class="text-[10px]">1</span>
-              </span>
-              
+                
+                
+                <div class="flex flex-wrap gap-1 mt-2">
+                  
+                  <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
+                    👍 <span class="text-[10px]">1</span>
+                  </span>
+                  
+                </div>
+                
+              </div>
             </div>
             
-          </div>
-        </div>
-        
-        <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
-          
-          <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
-          
-          <div class="flex-1 min-w-0">
-            <div class="flex items-baseline gap-2">
-              <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
-              <span class="text-xs text-[#3f3f46]">2026-04-04 11:12</span>
-            </div>
-            <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed">**📢 선곡 추천 공지 사항 📢**
+            <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
+              
+              <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
+              
+              <div class="flex-1 min-w-0">
+                <div class="flex items-baseline gap-2">
+                  <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
+                  <span class="text-xs text-[#3f3f46]">2026-04-04 11:12</span>
+                </div>
+                <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed">**📢 선곡 추천 공지 사항 📢**
 
 선곡 추천 리스트 ---&gt; [선곡 리스트 시트](https://docs.google.com/spreadsheets/d/115cwrD2uFfh-KSpgiQGBr9DJoa0hfeqBdLgdQK4Hxp0/edit?pli=1&amp;gid=1608245828#gid=1608245828)
 
@@ -159,29 +277,29 @@
 해당 시트에서 1차 투표를 통해 과반의 동의를 얻은 곡만 회의 진행할 수 있도록 부탁드립니다.
 
 .</p>
-            
-            
-            <div class="flex flex-wrap gap-1 mt-2">
-              
-              <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
-                👍 <span class="text-[10px]">1</span>
-              </span>
-              
+                
+                
+                <div class="flex flex-wrap gap-1 mt-2">
+                  
+                  <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
+                    👍 <span class="text-[10px]">1</span>
+                  </span>
+                  
+                </div>
+                
+              </div>
             </div>
             
-          </div>
-        </div>
-        
-        <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
-          
-          <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
-          
-          <div class="flex-1 min-w-0">
-            <div class="flex items-baseline gap-2">
-              <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
-              <span class="text-xs text-[#3f3f46]">2026-04-04 11:29</span>
-            </div>
-            <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed">📢 4/4 선곡 추천 공지 사항 📢
+            <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
+              
+              <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
+              
+              <div class="flex-1 min-w-0">
+                <div class="flex items-baseline gap-2">
+                  <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
+                  <span class="text-xs text-[#3f3f46]">2026-04-04 11:29</span>
+                </div>
+                <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed">📢 4/4 선곡 추천 공지 사항 📢
 
 해당 공지는 다음 합주 (4월 셋째주)를 위한 곡 선정 공지입니다.
 하기 일정에 맞춰 다음 합주에 진행 할 **추가 1곡** 선정 부탁드립니다.
@@ -192,78 +310,78 @@
 ~ 4/8 (수) 19:00 : 전체 멤버 컨펌 (투표 진행)
 
 팀별 곡 선정 완료 후 스레드에 선정 곡 업데이트 부탁드립니다.</p>
+                
+                
+                <div class="flex flex-wrap gap-1 mt-2">
+                  
+                  <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
+                    ✅ <span class="text-[10px]">1</span>
+                  </span>
+                  
+                  <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
+                    👍 <span class="text-[10px]">1</span>
+                  </span>
+                  
+                </div>
+                
+              </div>
+            </div>
             
-            
-            <div class="flex flex-wrap gap-1 mt-2">
+            <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
               
-              <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
-                ✅ <span class="text-[10px]">1</span>
-              </span>
+              <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
               
-              <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
-                👍 <span class="text-[10px]">1</span>
-              </span>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-baseline gap-2">
+                  <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
+                  <span class="text-xs text-[#3f3f46]">2026-04-07 02:53</span>
+                </div>
+                <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed">📍각종 링크 관리 스레드📍</p>
+                
+                
+              </div>
+            </div>
+            
+            <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
               
+              <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
+              
+              <div class="flex-1 min-w-0">
+                <div class="flex items-baseline gap-2">
+                  <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
+                  <span class="text-xs text-[#3f3f46]">2026-04-07 02:54</span>
+                </div>
+                <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed"></p>
+                
+                
+              </div>
             </div>
             
-          </div>
-        </div>
-        
-        <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
-          
-          <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
-          
-          <div class="flex-1 min-w-0">
-            <div class="flex items-baseline gap-2">
-              <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
-              <span class="text-xs text-[#3f3f46]">2026-04-07 02:53</span>
+            <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
+              
+              <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
+              
+              <div class="flex-1 min-w-0">
+                <div class="flex items-baseline gap-2">
+                  <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
+                  <span class="text-xs text-[#3f3f46]">2026-04-08 13:37</span>
+                </div>
+                <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed"></p>
+                
+                
+              </div>
             </div>
-            <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed">📍각종 링크 관리 스레드📍</p>
             
-            
-          </div>
-        </div>
-        
-        <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
-          
-          <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
-          
-          <div class="flex-1 min-w-0">
-            <div class="flex items-baseline gap-2">
-              <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
-              <span class="text-xs text-[#3f3f46]">2026-04-07 02:54</span>
-            </div>
-            <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed"></p>
-            
-            
-          </div>
-        </div>
-        
-        <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
-          
-          <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
-          
-          <div class="flex-1 min-w-0">
-            <div class="flex items-baseline gap-2">
-              <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
-              <span class="text-xs text-[#3f3f46]">2026-04-08 13:37</span>
-            </div>
-            <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed"></p>
-            
-            
-          </div>
-        </div>
-        
-        <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
-          
-          <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
-          
-          <div class="flex-1 min-w-0">
-            <div class="flex items-baseline gap-2">
-              <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
-              <span class="text-xs text-[#3f3f46]">2026-04-28 02:46</span>
-            </div>
-            <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed">❗️공연 일정 관련 공지❗️
+            <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
+              
+              <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
+              
+              <div class="flex-1 min-w-0">
+                <div class="flex items-baseline gap-2">
+                  <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
+                  <span class="text-xs text-[#3f3f46]">2026-04-28 02:46</span>
+                </div>
+                <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed">❗️공연 일정 관련 공지❗️
 @everyone 
 해당 공지 확인 후 ✅ 이모지 필수입니다.
 
@@ -278,37 +396,37 @@
 👏 이모지 누르지 않으신 분들은 기존 공지글에 의견 남긴 후 🤟🏻 이모지 눌러주세요.
 
 의견 모아지지 않을 시 다음 합주 후 회식 자리에서 함께 논의 하겠습니다.</p>
-            
-            
-            <div class="flex flex-wrap gap-1 mt-2">
-              
-              <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
-                ✅ <span class="text-[10px]">8</span>
-              </span>
-              
-              <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
-                👏 <span class="text-[10px]">4</span>
-              </span>
-              
-              <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
-                🤟 <span class="text-[10px]">1</span>
-              </span>
-              
+                
+                
+                <div class="flex flex-wrap gap-1 mt-2">
+                  
+                  <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
+                    ✅ <span class="text-[10px]">8</span>
+                  </span>
+                  
+                  <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
+                    👏 <span class="text-[10px]">4</span>
+                  </span>
+                  
+                  <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
+                    🤟 <span class="text-[10px]">1</span>
+                  </span>
+                  
+                </div>
+                
+              </div>
             </div>
             
-          </div>
-        </div>
-        
-        <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
-          
-          <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
-          
-          <div class="flex-1 min-w-0">
-            <div class="flex items-baseline gap-2">
-              <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
-              <span class="text-xs text-[#3f3f46]">2026-05-01 09:39</span>
-            </div>
-            <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed">🎤 5/2 합주 공지 🎤
+            <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
+              
+              <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
+              
+              <div class="flex-1 min-w-0">
+                <div class="flex items-baseline gap-2">
+                  <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
+                  <span class="text-xs text-[#3f3f46]">2026-05-01 09:39</span>
+                </div>
+                <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed">🎤 5/2 합주 공지 🎤
 
 위치 : 사당 드림합주실 1호점 S방
  [네이버지도]
@@ -317,86 +435,86 @@
 https://naver.me/Fx2X0zvK
 
 시간 : 10:00~13:00</p>
-            
-            <div class="flex flex-wrap gap-2 mt-2">
-              
-              <a href="https://cdn.discordapp.com/attachments/1489895992047308902/1499706925611487373/IMG_6652.png?ex=6a10246a&amp;is=6a0ed2ea&amp;hm=2581b04424742b60411945d8c5f5f225285ed7fbac6781351b23b72527a5042e&amp;" target="_blank" class="text-xs text-[#52525b] hover:text-[#a1a1aa] transition-colors flex items-center gap-1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
-                IMG_6652.png
-              </a>
-              
+                
+                <div class="flex flex-wrap gap-2 mt-2">
+                  
+                  <a href="https://cdn.discordapp.com/attachments/1489895992047308902/1499706925611487373/IMG_6652.png?ex=6a10246a&amp;is=6a0ed2ea&amp;hm=2581b04424742b60411945d8c5f5f225285ed7fbac6781351b23b72527a5042e&amp;" target="_blank" class="text-xs text-[#52525b] hover:text-[#a1a1aa] transition-colors flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                    IMG_6652.png
+                  </a>
+                  
+                </div>
+                
+                
+                <div class="flex flex-wrap gap-1 mt-2">
+                  
+                  <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
+                    👍 <span class="text-[10px]">5</span>
+                  </span>
+                  
+                  <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
+                    ✅ <span class="text-[10px]">1</span>
+                  </span>
+                  
+                </div>
+                
+              </div>
             </div>
             
-            
-            <div class="flex flex-wrap gap-1 mt-2">
+            <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
               
-              <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
-                👍 <span class="text-[10px]">5</span>
-              </span>
+              <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
               
-              <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
-                ✅ <span class="text-[10px]">1</span>
-              </span>
-              
-            </div>
-            
-          </div>
-        </div>
-        
-        <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
-          
-          <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
-          
-          <div class="flex-1 min-w-0">
-            <div class="flex items-baseline gap-2">
-              <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
-              <span class="text-xs text-[#3f3f46]">2026-05-18 04:41</span>
-            </div>
-            <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed">@everyone ,
+              <div class="flex-1 min-w-0">
+                <div class="flex items-baseline gap-2">
+                  <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
+                  <span class="text-xs text-[#3f3f46]">2026-05-18 04:41</span>
+                </div>
+                <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed">@everyone ,
 오늘까지 5월달 회비 5만원씩 입금 부탁드립니다~!
 계좌 : 3333292544412 카카오뱅크</p>
-            
-            
-          </div>
-        </div>
-        
-        <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
-          
-          <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
-          
-          <div class="flex-1 min-w-0">
-            <div class="flex items-baseline gap-2">
-              <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
-              <span class="text-xs text-[#3f3f46]">2026-05-18 04:42</span>
+                
+                
+              </div>
             </div>
-            <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed">@everyone ,
+            
+            <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
+              
+              <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
+              
+              <div class="flex-1 min-w-0">
+                <div class="flex items-baseline gap-2">
+                  <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
+                  <span class="text-xs text-[#3f3f46]">2026-05-18 04:42</span>
+                </div>
+                <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed">@everyone ,
 
 club ff 9/19 토요일 공연 찬성 하시는 분은 ✅ 누른 후 댓글로 “찬성합니다” 적어주세요.
 
 큰 돈이 나가기 때문에 모두 의견 확인 후 진행하겠습니다.</p>
-            
-            
-            <div class="flex flex-wrap gap-1 mt-2">
-              
-              <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
-                ✅ <span class="text-[10px]">8</span>
-              </span>
-              
+                
+                
+                <div class="flex flex-wrap gap-1 mt-2">
+                  
+                  <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
+                    ✅ <span class="text-[10px]">8</span>
+                  </span>
+                  
+                </div>
+                
+              </div>
             </div>
             
-          </div>
-        </div>
-        
-        <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
-          
-          <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
-          
-          <div class="flex-1 min-w-0">
-            <div class="flex items-baseline gap-2">
-              <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
-              <span class="text-xs text-[#3f3f46]">2026-05-19 06:46</span>
-            </div>
-            <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed">@everyone ,
+            <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
+              
+              <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
+              
+              <div class="flex-1 min-w-0">
+                <div class="flex items-baseline gap-2">
+                  <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">령</span>
+                  <span class="text-xs text-[#3f3f46]">2026-05-19 06:46</span>
+                </div>
+                <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed">@everyone ,
 9/19 토요일 club ff 계약금 걸었습니다!
 
 저희가 확정해야 할 것 한가지가 있는데
@@ -405,27 +523,29 @@ club ff 9/19 토요일 공연 찬성 하시는 분은 ✅ 누른 후 댓글로 �
 또한, 아래 비용은 기본 세팅 외 추가 비용이 아니며 사용하려면 지불해야 하는 비용입니다
 크래쉬 심벌 사용 + 5 (개인 심벌 사용시 무료)
 키보드 사용 + 5</p>
-            
-            
-            <div class="flex flex-wrap gap-1 mt-2">
-              
-              <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
-                ✅ <span class="text-[10px]">1</span>
-              </span>
-              
+                
+                
+                <div class="flex flex-wrap gap-1 mt-2">
+                  
+                  <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a]">
+                    ✅ <span class="text-[10px]">1</span>
+                  </span>
+                  
+                </div>
+                
+              </div>
             </div>
             
           </div>
+          
         </div>
         
-      </div>
-      
-    </div>
-    
 
-    <div class="text-center text-xs text-[#3f3f46] py-8 border-t border-[#1f1f1f] mt-8">
-      마지막 동기화: 2026-05-21T14:09:04.392836 UTC
-    </div>
+        <div class="text-center text-xs text-[#3f3f46] py-8 border-t border-[#1f1f1f] mt-8">
+          마지막 동기화: 2026-05-21T14:34:46.901101 UTC
+        </div>
+      </div>
+    </main>
   </div>
 
 </body>
