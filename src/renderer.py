@@ -48,11 +48,15 @@ def render_site():
     channels_out.mkdir(parents=True, exist_ok=True)
     threads_out.mkdir(parents=True, exist_ok=True)
 
+    base_path = "/wild-rush-archive"
+
     # --- Render index.html ---
     index_template = env.get_template("index.html")
     index_html = index_template.render(
         guild=guild,
         categories=categories,
+        channels=channels,
+        base_path=base_path,
         rendered_at=datetime.utcnow().isoformat(),
     )
     with open(index_out, "w", encoding="utf-8") as f:
@@ -66,6 +70,7 @@ def render_site():
             guild=guild,
             channel=channel,
             categories=categories,
+            base_path=base_path,
             rendered_at=datetime.utcnow().isoformat(),
         )
         ch_path = channels_out / cid / "index.html"
@@ -82,6 +87,7 @@ def render_site():
                 channel=channel,
                 thread=thread,
                 categories=categories,
+                base_path=base_path,
                 rendered_at=datetime.utcnow().isoformat(),
             )
             th_path = threads_out / thread["id"] / "index.html"
