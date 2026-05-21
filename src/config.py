@@ -12,6 +12,11 @@ GUILD_ID = os.getenv("DISCORD_GUILD_ID", "")
 # Format: ["123456789", "987654321"]
 CHANNEL_IDS: list[str] = []
 
+# MiniMax LLM API (for tag extraction)
+MINIMAX_API_KEY = os.getenv("MINIMAX_API_KEY", "sk-cp-cHWCuGa51eQTXhGFDc9MWw5S3hF35xAkZYyZ3EB3ed7CvrS26Mhln2PUGgtyQR2Mohv1gT4FZB0SmqxCoBc75xwkpavBWTBrm2sHtL0vaeSE_CgcKUwuOwE")
+MINIMAX_BASE_URL = "https://api.minimaxi.chat/v1"
+MINIMAX_MODEL = "MiniMax-M2.7"
+
 # Paths
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "..", "templates")
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "data")

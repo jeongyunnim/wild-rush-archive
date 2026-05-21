@@ -1,4 +1,4 @@
-"""Discord message crawler using discord.py async API."""
+"""Discord message crawler with LLM-based tagging."""
 
 import asyncio
 import json
@@ -11,6 +11,8 @@ import discord
 from discord import Thread
 
 from .config import BOT_TOKEN, GUILD_ID, CHANNEL_IDS, OUTPUT_DIR, MESSAGE_BATCH_SIZE, MAX_MESSAGES_PER_THREAD, RATE_LIMIT_DELAY
+
+from .tagger import tag_messages
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger(__name__)
@@ -93,7 +95,7 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
     client = discord.Client(intents=intents)
 
     await client.login(BOT_TOKEN)
-    guild = await client.fetch_guild(int(int(GUILD_ID)))
+    guild = await client.fetch_guild(int(GUILD_ID))
     log.info(f"Guild: {guild.name} (ID: {guild.id})")
 
     all_channels = []
@@ -137,6 +139,13 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
             msgs = await fetch_messages_for_channel(channel)
             channel_data[cid]["messages"] = msgs
 
+            # Extract tags for channel messages (sequential LLM calls)
+            if msgs:
+                log.info(f"Extracting tags for {len(msgs)} messages in '{channel.name}'...")
+                tags = await tag_messages(msgs, channel.name)
+                # Tags are stored in top-level tags dict
+                channel_data[cid]["_message_tags"] = tags
+
         # Fetch each thread
         for thread in threads:
             thread_msgs = await fetch_messages_for_channel(channel, thread)
@@ -149,6 +158,13 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
                 "archived": thread.archived,
                 "messages": thread_msgs,
             }
+
+            # Extract tags for thread messages
+            if thread_msgs:
+                log.info(f"Extracting tags for {len(thread_msgs)} messages in thread '{thread.name}'...")
+                thread_tags = await tag_messages(thread_msgs, f"{channel.name}/{thread.name}")
+                thread_info["_message_tags"] = thread_tags
+
             channel_data[cid]["threads"].append(thread_info)
             await asyncio.sleep(RATE_LIMIT_DELAY)
 
@@ -162,6 +178,16 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
             categories[cat_name] = []
         categories[cat_name].append(ch_data)
 
+    # Build top-level tags dict from all _message_tags
+    all_tags: dict[str, dict[str, list[str]]] = {}
+    for cid, ch_data in channel_data.items():
+        if "_message_tags" in ch_data:
+            all_tags[cid] = {"channel": ch_data.pop("_message_tags")}
+        for thread in ch_data.get("threads", []):
+            if "_message_tags" in thread:
+                tid = thread["id"]
+                all_tags[tid] = {"thread": thread.pop("_message_tags")}
+
     result = {
         "guild": {
             "id": str(guild.id),
@@ -171,6 +197,7 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
         },
         "categories": categories,
         "channels": channel_data,
+        "tags": all_tags,
         "crawled_at": datetime.utcnow().isoformat() + "Z",
     }
 
