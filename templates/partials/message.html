@@ -1,0 +1,68 @@
+{# Single message partial - include with: {% include 'partials/message.html' %} #}
+<div class="message-wrapper">
+  <div class="d-flex">
+    {% if msg.author_avatar %}
+    <img src="{{ msg.author_avatar }}" alt="{{ msg.author_name }}" class="avatar me-3">
+    {% else %}
+    <div class="rounded-circle me-3 bg-secondary d-flex align-items-center justify-content-center avatar">
+      <span>{{ msg.author_name[0] if msg.author_name else '?' }}</span>
+    </div>
+    {% endif %}
+
+    <div class="flex-grow-1">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <strong>{{ msg.author_name }}</strong>
+          {% if msg.author_roles %}
+          <span class="text-muted small ms-2">
+            {% for role in msg.author_roles %}
+              {% if role != "@everyone" %}· {{ role }}{% endif %}
+            {% endfor %}
+          </span>
+          {% endif %}
+        </div>
+        <small class="text-muted">{{ msg.timestamp|datetime }}</small>
+      </div>
+
+      <div class="mt-2 message-content">{{ msg.content }}</div>
+
+      {# Embeds #}
+      {% if msg.embeds %}
+      {% for emb in msg.embeds %}
+      {% if emb.title or emb.description %}
+      <div class="embed-card mt-2">
+        {% if emb.title %}<strong>{{ emb.title }}</strong>{% endif %}
+        {% if emb.description %}<div class="text-muted small mt-1">{{ emb.description }}</div>{% endif %}
+        {% if emb.url %}<a href="{{ emb.url }}" class="small text-muted">{{ emb.url }}</a>{% endif %}
+      </div>
+      {% endif %}
+      {% endfor %}
+      {% endif %}
+
+      {# Attachments #}
+      {% if msg.attachments %}
+      <div class="mt-2">
+        {% for att in msg.attachments %}
+        <div class="mb-2">
+          {% if att.filename.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.webp')) %}
+          <img src="{{ att.url }}" alt="{{ att.filename }}" class="img-fluid rounded" style="max-height: 300px;">
+          {% else %}
+          <a href="{{ att.url }}" target="_blank" class="small">📎 {{ att.filename }}</a>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {# Reactions #}
+      {% if msg.reactions %}
+      <div class="mt-2">
+        {% for reaction in msg.reactions %}
+        <span class="reaction-badge">{{ reaction.emoji }} {{ reaction.count }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
