@@ -31,10 +31,23 @@
 </head>
 <body class="bg-[#0a0a0f] text-[#e0e0e6]">
 
+  <!-- Mobile Top Bar -->
+  <div class="lg:hidden flex items-center justify-between px-4 py-3 border-b border-[#1f1f1f] bg-[#0d0d14]">
+    <button id="sidebar-toggle" class="p-2 rounded-lg hover:bg-[#1a1a24] transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </button>
+    <span class="text-sm font-medium text-white"># 공지-소통가능방</span>
+    <div class="w-8"></div>
+  </div>
+
+  <!-- Mobile Sidebar Overlay -->
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden"></div>
+
+
   <div class="flex h-screen overflow-hidden">
 
-    <!-- Sidebar -->
-    <aside class="w-64 flex-shrink-0 flex flex-col bg-[#0d0d14] border-r border-[#1f1f1f] overflow-hidden">
+    <!-- Sidebar (hidden on mobile by default) -->
+    <aside id="sidebar" class="w-64 flex-shrink-0 flex flex-col bg-[#0d0d14] border-r border-[#1f1f1f] overflow-hidden fixed inset-y-0 left-0 z-50 transform -translate-x-full lg:relative lg:translate-x-0 transition-transform duration-200">
 
       <!-- Server Header -->
       <div class="px-4 py-4 border-b border-[#1f1f1f]">
@@ -142,7 +155,7 @@
 
       <!-- Footer -->
       <div class="px-4 py-3 border-t border-[#1f1f1f]">
-        <p class="text-[10px] text-[#3f3f46]">마지막 동기화<br>2026-05-21T14:34:46.904240 UTC</p>
+        <p class="text-[10px] text-[#3f3f46]">마지막 동기화<br>2026-05-21T15:00:30.689449 UTC</p>
       </div>
     </aside>
 
@@ -693,11 +706,31 @@ https://naver.me/5xgKjdJD
         
 
         <div class="text-center text-xs text-[#3f3f46] py-8 border-t border-[#1f1f1f] mt-8">
-          마지막 동기화: 2026-05-21T14:34:46.904240 UTC
+          마지막 동기화: 2026-05-21T15:00:30.689449 UTC
         </div>
       </div>
     </main>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var toggle = document.getElementById('sidebar-toggle');
+      var sidebar = document.getElementById('sidebar');
+      var overlay = document.getElementById('sidebar-overlay');
+      if (toggle && sidebar && overlay) {
+        toggle.addEventListener('click', function() {
+          sidebar.classList.toggle('-translate-x-full');
+          sidebar.classList.toggle('translate-x-0');
+          overlay.classList.toggle('hidden');
+        });
+        overlay.addEventListener('click', function() {
+          sidebar.classList.add('-translate-x-full');
+          sidebar.classList.remove('translate-x-0');
+          overlay.classList.add('hidden');
+        });
+      }
+    });
+  </script>
 
 </body>
 </html>
