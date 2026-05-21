@@ -1,130 +1,127 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🧵 {{ thread.name }} — {{ guild.name }} Archive</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
   <style>
-    body { background: #1e1e2e; color: #cdd6f4; }
-    .card { background: #181825; border: 1px solid #313244; }
-    .card-header { background: #11111b; border-bottom: 1px solid #313244; }
-    .text-muted { color: #6c7086 !important; }
-    a { color: #89b4fa; text-decoration: none; }
-    a:hover { color: #b4befe; }
-    .breadcrumb { background: transparent; padding: 0; }
-    .message-wrapper { border-bottom: 1px solid #313244; padding: 1rem 1.5rem; }
-    .message-wrapper:last-child { border-bottom: none; }
-    .avatar { width: 44px; height: 44px; border-radius: 50%; }
-    .reaction-badge { font-size: 0.8rem; padding: 2px 6px; border-radius: 12px; background: #313244; margin-right: 4px; }
-    .embed-card { background: #2a2a3e; border-left: 3px solid #89b4fa; padding: 0.5rem 1rem; border-radius: 4px; }
+    * { font-family: 'Inter', sans-serif; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0f0f0f; }
+    ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
+    .line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
   </style>
 </head>
-<body>
-  <div class="container py-4" style="max-width: 900px;">
+<body class="bg-[#0a0a0f] text-[#e0e0e6] min-h-screen">
+
+  <div class="max-w-4xl mx-auto px-4 py-8">
 
     <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb" class="mb-3">
-      <ol class="breadcrumb" style="background: transparent;">
-        <li class="breadcrumb-item"><a href="/index.html">{{ guild.name }}</a></li>
-        <li class="breadcrumb-item"><a href="/channels/{{ channel.id }}/index.html"># {{ channel.name }}</a></li>
-        <li class="breadcrumb-item active" aria-current="page" style="color: #cdd6f4;">🧵 {{ thread.name }}</li>
-      </ol>
+    <nav class="flex items-center gap-2 text-sm text-[#52525b] mb-6">
+      <a href="/index.html" class="hover:text-[#a1a1aa] transition-colors">{{ guild.name }}</a>
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      <a href="/channels/{{ channel.id }}/index.html" class="hover:text-[#a1a1aa] transition-colors"># {{ channel.name }}</a>
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      <span class="text-[#d4d4d8]">🧵 {{ thread.name }}</span>
     </nav>
 
-    <!-- Thread header -->
-    <div class="card mb-4">
-      <div class="card-header">
-        <h4 class="mb-2">🧵 {{ thread.name }}</h4>
-        <div class="text-muted small">
-          생성: {{ thread.created_at|datetime }} ·
-          메시지 {{ thread.messages|length }}개
-        </div>
+    <!-- Thread Header -->
+    <div class="mb-8 pb-6 border-b border-[#1f1f1f]">
+      <h1 class="text-xl font-semibold text-white tracking-tight mb-2">🧵 {{ thread.name }}</h1>
+      <div class="flex items-center gap-3 text-xs text-[#3f3f46]">
+        <span>생성: {{ thread.created_at|datetime }}</span>
+        <span>·</span>
+        <span>{{ thread.messages|length }}개 메시지</span>
       </div>
     </div>
 
     <!-- Messages -->
-    <div class="card">
+    <div>
       {% for msg in thread.messages %}
-      <div class="message-wrapper">
-        <div class="d-flex">
-          {% if msg.author_avatar %}
-          <img src="{{ msg.author_avatar }}" alt="{{ msg.author_name }}" class="avatar me-3">
-          {% else %}
-          <div class="rounded-circle me-3 bg-secondary d-flex align-items-center justify-content-center avatar">
-            <span>{{ msg.author_name[0] }}</span>
+      <div class="flex gap-3 py-5{% not loop.first %} border-t border-[#1f1f1f]{% endif %}">
+        {% if msg.author_avatar %}
+        <img src="{{ msg.author_avatar }}" alt="{{ msg.author_name }}" class="w-10 h-10 rounded-full object-cover flex-shrink-0 mt-0.5">
+        {% else %}
+        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#4f46e5] to-[#7c3aed] flex items-center justify-center text-sm font-semibold text-white flex-shrink-0 mt-0.5">
+          {{ msg.author_name[0] }}
+        </div>
+        {% endif %}
+
+        <div class="flex-1 min-w-0">
+          <div class="flex items-baseline gap-3 mb-1.5">
+            <span class="text-sm font-semibold text-[#e4e4e7]">{{ msg.author_name }}</span>
+            <span class="text-xs text-[#3f3f46]">{{ msg.timestamp|datetime }}</span>
+          </div>
+
+          {% if msg.content %}
+          <p class="text-sm text-[#a1a1aa] leading-relaxed whitespace-pre-wrap">{{ msg.content }}</p>
+          {% endif %}
+
+          <!-- Images -->
+          {% if msg.attachments %}
+          <div class="grid gap-2 mt-3{% if msg.attachments|length > 1 %} grid-cols-2{% endif %}">
+            {% for att in msg.attachments %}
+            {% if att.filename.lower() ends-with ('.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg') %}
+            <a href="{{ att.url }}" target="_blank" class="block rounded-lg overflow-hidden border border-[#1f1f1f] hover:border-[#3f3f46] transition-colors">
+              <img src="{{ att.url }}" alt="{{ att.filename }}" class="w-full max-h-72 object-cover">
+            </a>
+            {% else %}
+            <a href="{{ att.url }}" target="_blank" class="inline-flex items-center gap-2 px-3 py-2 bg-[#111118] border border-[#1f1f1f] rounded-lg text-xs text-[#71717a] hover:text-[#a1a1aa] hover:border-[#3f3f46] transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+              {{ att.filename }}
+            </a>
+            {% endif %}
+            {% endfor %}
           </div>
           {% endif %}
 
-          <div class="flex-grow-1">
-            <div class="d-flex justify-content-between align-items-start">
-              <div>
-                <strong>{{ msg.author_name }}</strong>
-                {% if msg.author_roles %}
-                <span class="text-muted small ms-2">
-                  {% for role in msg.author_roles %}
-                    {% if role != "@everyone" %}· {{ role }}{% endif %}
-                  {% endfor %}
-                </span>
-                {% endif %}
-              </div>
-              <small class="text-muted">{{ msg.timestamp|datetime }}</small>
-            </div>
-
-            {% if msg.thread_id and msg.id == msg.thread_id %}
-            <div class="alert alert-info mt-2 mb-2 py-2" style="font-size: 0.85rem; background: #1e3a5f; border: none;">
-              📌 스레드 생성자 메시지
-            </div>
-            {% endif %}
-
-            <div class="mt-2 message-content">{{ msg.content }}</div>
-
-            <!-- Embeds -->
-            {% if msg.embeds %}
-            {% for emb in msg.embeds %}
-            {% if emb.title or emb.description %}
-            <div class="embed-card mt-2">
-              {% if emb.title %}<strong>{{ emb.title }}</strong>{% endif %}
-              {% if emb.description %}<div class="text-muted small mt-1">{{ emb.description }}</div>{% endif %}
-              {% if emb.url %}<a href="{{ emb.url }}" class="small text-muted">{{ emb.url }}</a>{% endif %}
-            </div>
-            {% endif %}
-            {% endfor %}
-            {% endif %}
-
-            <!-- Attachments -->
-            {% if msg.attachments %}
-            <div class="mt-2">
-              {% for att in msg.attachments %}
-              <div class="mb-2">
-                {% if att.filename.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.webp')) %}
-                <img src="{{ att.url }}" alt="{{ att.filename }}" class="img-fluid rounded" style="max-height: 300px;">
-                {% else %}
-                <a href="{{ att.url }}" target="_blank" class="small">📎 {{ att.filename }}</a>
-                {% endif %}
-              </div>
-              {% endfor %}
-            </div>
-            {% endif %}
-
-            <!-- Reactions -->
-            {% if msg.reactions %}
-            <div class="mt-2">
-              {% for reaction in msg.reactions %}
-              <span class="reaction-badge">{{ reaction.emoji }} {{ reaction.count }}</span>
-              {% endfor %}
-            </div>
-            {% endif %}
-
+          <!-- Embeds -->
+          {% if msg.embeds %}
+          {% for emb in msg.embeds %}
+          {% if emb.title or emb.description %}
+          <div class="mt-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl">
+            {% if emb.title %}<p class="text-sm font-medium text-[#d4d4d8]">{{ emb.title }}</p>{% endif %}
+            {% if emb.description %}<p class="text-sm text-[#71717a] mt-1">{{ emb.description }}</p>{% endif %}
+            {% if emb.url %}<a href="{{ emb.url }}" target="_blank" class="text-xs text-[#52525b] hover:text-[#a1a1aa] mt-1 inline-block transition-colors">{{ emb.url }}</a>{% endif %}
           </div>
+          {% endif %}
+          {% endfor %}
+          {% endif %}
+
+          <!-- Reactions -->
+          {% if msg.reactions %}
+          <div class="flex flex-wrap gap-1.5 mt-3">
+            {% for reaction in msg.reactions %}
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#111118] border border-[#1f1f1f] text-xs text-[#71717a] hover:border-[#3f3f46] transition-colors cursor-default">
+              {{ reaction.emoji }} <span class="text-[10px]">{{ reaction.count }}</span>
+            </span>
+            {% endfor %}
+          </div>
+          {% endif %}
         </div>
       </div>
       {% endfor %}
     </div>
 
-    <div class="text-muted text-center mt-4" style="font-size: 0.85rem;">
-      마지막 동기화: {{ rendered_at }} UTC · {{ thread.messages|length }}개 메시지
+    <div class="text-center text-xs text-[#3f3f46] py-8 border-t border-[#1f1f1f] mt-4">
+      {{ thread.messages|length }}개 메시지 &nbsp;·&nbsp; 마지막 동기화: {{ rendered_at }} UTC
     </div>
   </div>
+
 </body>
 </html>

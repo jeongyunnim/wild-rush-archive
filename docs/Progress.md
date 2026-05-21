@@ -106,4 +106,55 @@ band-archive/
 
 ---
 
-*마지막 업데이트: 2024-05-21*
+## 변경 이력
+
+### 2026-05-21: UI 리디자인 (Tailwind CSS Dark Mode)
+
+**변경된 파일:**
+- `templates/index.html`
+- `templates/channel.html`
+- `templates/thread.html`
+
+**주요 변경 사항:**
+
+1. **프레임워크 전환**: Bootstrap 5 → Tailwind CSS (CDN)
+2. **아이콘**: Lucide Icons (stroke-width: 1.5)
+3. **폰트**: Inter (Google Fonts, 300/400/500/600 weights)
+4. **디자인 스타일**: Linear/Stripe/Vercel 영감의 모던 다크 테마
+
+**디자인 요소:**
+- **색상 팔레트**: 커스텀 다크 컬러 (dark-50 ~ dark-900), Indigo 액센트
+- **배경**: 그라데이션 (0a0f1a → 030712)
+- **카드**: Glass morphism (backdrop-filter blur), 반투명 배경
+- **테두리**: 미묘한 border (dark-500/20~30)
+- **호버 효과**: 부드러운 트랜지션, 색상 변화, translateX 이동
+- **반응형**: 모바일/데스크톱 대응
+
+**index.html 변경점:**
+- 길드 헤더: 아이콘 + 이름 + 설명 (rounded-2xl glass card)
+- 카테고리 섹션: 폴더 아이콘 + 대문자 라벨
+- 채널 카드: 해시 아이콘, 토픽, 스레드/메시지 수 배지
+- 호버 시 translateX(4px) 애니메이션
+
+**channel.html 변경점:**
+- 브레드크럼: 홈 아이콘 + chevron 구분자
+- 채널 헤더: gradient 아이콘 박스, 카테고리 표시
+- 스레드 목록: 왼쪽 보더 라인, 날짜/작성자 정보
+- 메시지 목록: 아바타 + 이름 + 타임스탬프 + 콘텐츠 + 첨부파일 + 리액션
+
+**thread.html 변경점:**
+- 브레드크럼: 3단계 (홈 → 채널 → 스레드)
+- 스레드 헤더: git-branch 아이콘, 생성일/메시지 수
+- 날짜 구분선: 가운데 배치, 양쪽 그라데이션 라인
+- 메시지 카드: 스레드 시작 메시지 강조 (왼쪽 indigo 보더)
+- 역할 배지, 리액션 스타일링
+- Embed 카드 (왼쪽 보더 + 어두운 배경)
+
+**제거된 요소:**
+- 플로팅 다운로드 버튼
+- 이모지 사용 (아이콘으로 대체)
+- Bootstrap 관련 클래스
+
+---
+
+*마지막 업데이트: 2026-05-21*

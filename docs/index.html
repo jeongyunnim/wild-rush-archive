@@ -1,87 +1,110 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>pinting — Discord Archive</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>pinting — Archive</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
   <style>
-    body { background: #1e1e2e; color: #cdd6f4; }
-    .card { background: #181825; border: 1px solid #313244; }
-    .card-header { background: #11111b; border-bottom: 1px solid #313244; }
-    .text-muted { color: #6c7086 !important; }
-    a { color: #89b4fa; text-decoration: none; }
-    a:hover { color: #b4befe; }
-    .channel-icon { color: #89b4fa; }
-    .category-header { color: #f38ba8; font-weight: bold; }
-    .guild-icon { width: 48px; height: 48px; border-radius: 50%; }
-    .footer { color: #6c7086; font-size: 0.85rem; }
+    * { font-family: 'Inter', sans-serif; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0f0f0f; }
+    ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
   </style>
 </head>
-<body>
-  <div class="container py-4">
+<body class="bg-[#0a0a0f] text-[#e0e0e6] min-h-screen">
 
-    <!-- Header -->
-    <div class="d-flex align-items-center mb-4">
+  <div class="max-w-5xl mx-auto px-4 py-10">
+
+    <!-- Server Header -->
+    <div class="flex items-center gap-4 mb-10 pb-8 border-b border-[#1f1f1f]">
       
-      <img src="https://cdn.discordapp.com/icons/1229710123354554429/c4037f0f4560d2cbd9a171daea472e06.png?size=1024" alt="pinting" class="guild-icon me-3">
+      <img src="https://cdn.discordapp.com/icons/1229710123354554429/c4037f0f4560d2cbd9a171daea472e06.png?size=1024" alt="pinting" class="w-14 h-14 rounded-full object-cover ring-2 ring-[#2a2a2a]">
       
       <div>
-        <h2 class="mb-0">pinting</h2>
-        <small class="text-muted">Discord Archive</small>
+        <h1 class="text-2xl font-semibold text-white tracking-tight">pinting</h1>
+        <p class="text-sm text-[#6b6b7b] mt-0.5">Discord Archive · 1개 카테고리</p>
       </div>
     </div>
 
+    <!-- Category Sections -->
     
-
-    <!-- Channel categories -->
-    
-    <div class="card mb-3">
-      <div class="card-header">
-        <span class="category-header">없음</span>
-        <span class="text-muted float-end">2개 채널</span>
+    <div class="mb-10">
+      <!-- Category Header -->
+      <div class="flex items-center gap-2 mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#52525b]"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+        <span class="text-xs font-medium text-[#52525b] uppercase tracking-widest">없음</span>
+        <span class="text-xs text-[#3f3f46]">2개 채널</span>
       </div>
-      <div class="card-body p-0">
-        <ul class="list-group list-group-flush">
-          
-          <li class="list-group-item" style="background: transparent;">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <span class="channel-icon">#</span>
-                <a href="/channels/1229710123354554432/index.html">일반</a>
-                
-              </div>
-              <div class="text-muted small">
-                
-                <span>💬 366개 메시지</span>
-              </div>
+
+      <!-- Channel Cards -->
+      <div class="grid gap-2">
+        
+        <a href="/channels/1229710123354554432/index.html"
+           class="group flex items-center justify-between p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] hover:bg-[#16161e] transition-all duration-150">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-lg bg-[#1a1a24] border border-[#2a2a2a] flex items-center justify-center flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
             </div>
-          </li>
-          
-          <li class="list-group-item" style="background: transparent;">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <span class="channel-icon">#</span>
-                <a href="/channels/1240624367432372255/index.html">일일-스크럼</a>
-                
-              </div>
-              <div class="text-muted small">
-                
-                <span>💬 494개 메시지</span>
-              </div>
+            <div>
+              <p class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">일반</p>
+              
             </div>
-          </li>
-          
-        </ul>
+          </div>
+          <div class="flex items-center gap-4 text-xs text-[#52525b]">
+            
+            <span class="flex items-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              366
+            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#3f3f46] group-hover:text-[#6b6b7b] group-hover:translate-x-0.5 transition-all"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
+        </a>
+        
+        <a href="/channels/1240624367432372255/index.html"
+           class="group flex items-center justify-between p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] hover:bg-[#16161e] transition-all duration-150">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-lg bg-[#1a1a24] border border-[#2a2a2a] flex items-center justify-center flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">일일-스크럼</p>
+              
+            </div>
+          </div>
+          <div class="flex items-center gap-4 text-xs text-[#52525b]">
+            
+            <span class="flex items-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              494
+            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#3f3f46] group-hover:text-[#6b6b7b] group-hover:translate-x-0.5 transition-all"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
+        </a>
+        
       </div>
     </div>
     
 
     <!-- Footer -->
-    <div class="footer text-center mt-4">
-      마지막 동기화: 2026-05-21T13:44:37.209514 UTC<br>
-      Generated by <a href="https://github.com/openclaw">Band Archive</a>
+    <div class="text-center text-xs text-[#3f3f46] py-8 border-t border-[#1f1f1f]">
+      마지막 동기화: 2026-05-21T14:01:25.637178 UTC &nbsp;·&nbsp; Generated by Band Archive
     </div>
   </div>
+
 </body>
 </html>
