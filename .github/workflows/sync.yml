@@ -26,6 +26,7 @@ jobs:
         env:
           DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
           DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
+          MINIMAX_API_KEY: ${{ secrets.MINIMAX_API_KEY }}
 
       - name: Render HTML
         run: python -m src.renderer
