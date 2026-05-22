@@ -130,6 +130,8 @@ def render_site():
     for tag, occurrences in all_tags.items():
         tag_html = tag_detail_template.render(
             guild=guild,
+            categories=categories,
+            channel=channel,
             tag=tag,
             occurrences=occurrences,
             channels=channels,
