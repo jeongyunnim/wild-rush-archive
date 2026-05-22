@@ -290,7 +290,13 @@ def run_crawler():
         message_content=True,
         guilds=True,
     )
-    return asyncio.run(crawl_guild(intents))
+    client = discord.Client(intents=intents)
+    try:
+        client.run(BOT_TOKEN, log_handler=None)
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise
 
 
 if __name__ == "__main__":
