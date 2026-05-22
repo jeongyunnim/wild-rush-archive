@@ -34,6 +34,10 @@ jobs:
           DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
           MINIMAX_API_KEY: ${{ secrets.MINIMAX_API_KEY }}
 
+      - name: Retag all existing untagged messages
+        run: python retag_all.py
+        env:
+          MINIMAX_API_KEY: ${{ secrets.MINIMAX_API_KEY }}
       - name: Render HTML
         run: python -m src.renderer
 
