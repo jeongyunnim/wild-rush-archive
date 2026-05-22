@@ -120,6 +120,11 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
 
         log.info(f"Guild: {guild.name} (ID: {guild.id})")
 
+        # Log categories and channels available
+        log.info(f"Guild categories: {len(guild.categories)}")
+        for cat in guild.categories:
+            log.info(f"  Category '{cat.name}': {len(cat.channels)} channels")
+
         existing = _load_existing()
         existing_msg_ids = existing.get("msg_ids", {})
         existing_tags = existing.get("tags", {})
