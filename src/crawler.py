@@ -1,4 +1,4 @@
-"""Discord message crawler with LLM-based tagging."""
+"""Discord message crawler with LLM-based incremental tagging."""
 
 import asyncio
 import json
@@ -52,23 +52,48 @@ def serialize_message(msg: discord.Message) -> dict[str, Any]:
     }
 
 
-async def fetch_messages_for_channel(channel: discord.TextChannel, thread: Thread | None = None) -> list[dict[str, Any]]:
-    """Fetch all messages from a channel or thread."""
-    target = thread if thread else channel
+def load_existing_data() -> dict[str, Any]:
+    """Load existing guild_data.json if present."""
+    out_path = os.path.join(OUTPUT_DIR, "guild_data.json")
+    if os.path.exists(out_path):
+        with open(out_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+
+def get_existing_message_ids(channel_data: dict[str, Any]) -> set[str]:
+    """Collect all existing message IDs from channel data."""
+    ids = set()
+    for ch in channel_data.values():
+        for msg in ch.get("messages", []):
+            ids.add(msg["id"])
+        for thread in ch.get("threads", []):
+            for msg in thread.get("messages", []):
+                ids.add(msg["id"])
+    return ids
+
+
+async def fetch_messages_since(
+    channel_or_thread,
+    since_id: str | None = None,
+) -> list[dict[str, Any]]:
+    """Fetch messages from a channel or thread, optionally since a given message ID."""
     messages = []
     oldest_id = None
 
-    log.info(f"Fetching messages from: {target.name} (ID: {target.id})")
+    log.info(f"Fetching messages from: {channel_or_thread.name} (ID: {channel_or_thread.id})")
 
     try:
         while True:
             if len(messages) >= MAX_MESSAGES_PER_THREAD:
-                log.warning(f"Cap reached for {target.name}, truncating at {MAX_MESSAGES_PER_THREAD}")
+                log.warning(f"Cap reached for {channel_or_thread.name}, truncating at {MAX_MESSAGES_PER_THREAD}")
                 break
 
-            query = target.history(limit=MESSAGE_BATCH_SIZE, oldest_first=True)
+            query = channel_or_thread.history(limit=MESSAGE_BATCH_SIZE, oldest_first=True)
             if oldest_id:
-                query = target.history(limit=MESSAGE_BATCH_SIZE, oldest_first=True, after=discord.Object(oldest_id))
+                query = channel_or_thread.history(limit=MESSAGE_BATCH_SIZE, oldest_first=True, after=discord.Object(oldest_id))
+            elif since_id:
+                query = channel_or_thread.history(limit=MESSAGE_BATCH_SIZE, oldest_first=True, after=discord.Object(since_id))
 
             batch = []
             async for msg in query:
@@ -81,19 +106,26 @@ async def fetch_messages_for_channel(channel: discord.TextChannel, thread: Threa
             messages.extend(batch)
             await asyncio.sleep(RATE_LIMIT_DELAY)
 
-            log.info(f"  Fetched {len(messages)} messages so far from {target.name}")
+            log.info(f"  Fetched {len(messages)} messages so far from {channel_or_thread.name}")
 
     except Exception as e:
-        log.error(f"Error fetching {target.name}: {e}")
+        log.error(f"Error fetching {channel_or_thread.name}: {e}")
 
-    log.info(f"Total fetched: {len(messages)} messages from {target.name}")
+    log.info(f"Total fetched: {len(messages)} messages from {channel_or_thread.name}")
     return messages
 
 
 async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
-    """Main crawl function. Returns all guild data as dict."""
-    client = discord.Client(intents=intents)
+    """Incremental crawl: only fetch new messages since last crawl."""
+    # Load existing data
+    existing = load_existing_data()
+    existing_channel_ids = {ch["id"]: ch for ch in existing.get("channels", {}).values()}
+    existing_msg_ids = get_existing_message_ids(existing.get("channels", {}))
+    existing_tags = existing.get("tags", {})
 
+    log.info(f"Loaded {len(existing_msg_ids)} existing messages from previous crawl")
+
+    client = discord.Client(intents=intents)
     await client.login(BOT_TOKEN)
     guild = await client.fetch_guild(int(GUILD_ID))
     log.info(f"Guild: {guild.name} (ID: {guild.id})")
@@ -109,6 +141,9 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
         if CHANNEL_IDS and str(ch.id) not in CHANNEL_IDS:
             continue
         all_channels.append(ch)
+
+        # Preserve existing channel data as base
+        prev = existing_channel_ids.get(str(ch.id), {})
         channel_data[str(ch.id)] = {
             "id": str(ch.id),
             "name": ch.name,
@@ -116,11 +151,14 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
             "category_id": str(ch.category.id) if ch.category else None,
             "topic": ch.topic or "",
             "type": str(ch.type),
-            "threads": [],
-            "messages": [],
+            "threads": list(prev.get("threads", [])),  # Preserve existing threads
+            "messages": list(prev.get("messages", [])),  # Preserve existing messages
         }
 
     log.info(f"Found {len(all_channels)} channels to crawl")
+
+    # Track which channels/threads got new messages
+    new_tag_sources: dict[str, dict[str, list[str]]] = {}  # channel_id -> {channel/thread: {msg_id: tags}}
 
     # Process each channel
     for channel in all_channels:
@@ -134,38 +172,68 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
             log.error(f"Error fetching threads for {channel.name}: {e}")
             threads = []
 
-        # Fetch messages from the channel itself (if not a forum)
+        # Fetch new messages from the channel itself (if not a forum)
         if not isinstance(channel, discord.ForumChannel):
-            msgs = await fetch_messages_for_channel(channel)
-            channel_data[cid]["messages"] = msgs
+            prev_msgs = channel_data[cid]["messages"]
+            since_id = prev_msgs[-1]["id"] if prev_msgs else None
 
-            # Extract tags for channel messages (sequential LLM calls)
-            if msgs:
-                log.info(f"Extracting tags for {len(msgs)} messages in '{channel.name}'...")
-                tags = await tag_messages(msgs, channel.name)
-                # Tags are stored in top-level tags dict
-                channel_data[cid]["_message_tags"] = tags
+            new_msgs = await fetch_messages_since(channel, since_id=since_id)
 
-        # Fetch each thread
+            if new_msgs:
+                log.info(f"  → {len(new_msgs)} NEW messages in '{channel.name}' (since_id: {since_id})")
+                channel_data[cid]["messages"].extend(new_msgs)
+
+                # Tag only new messages
+                log.info(f"Extracting tags for {len(new_msgs)} NEW messages in '{channel.name}'...")
+                new_tags = await tag_messages(new_msgs, channel.name)
+                new_tag_sources[cid] = {"channel": new_tags}
+            else:
+                log.info(f"  → No new messages in '{channel.name}'")
+                new_tag_sources[cid] = {"channel": {}}
+
+        # Process threads
         for thread in threads:
-            thread_msgs = await fetch_messages_for_channel(channel, thread)
-            thread_info = {
-                "id": str(thread.id),
-                "name": thread.name,
-                "owner_id": str(thread.owner_id) if thread.owner_id else None,
-                "message_count": thread.message_count if hasattr(thread, 'message_count') else len(thread_msgs),
-                "created_at": thread.created_at.isoformat(),
-                "archived": thread.archived,
-                "messages": thread_msgs,
-            }
+            tid = str(thread.id)
 
-            # Extract tags for thread messages
-            if thread_msgs:
-                log.info(f"Extracting tags for {len(thread_msgs)} messages in thread '{thread.name}'...")
-                thread_tags = await tag_messages(thread_msgs, f"{channel.name}/{thread.name}")
-                thread_info["_message_tags"] = thread_tags
+            # Find existing thread or create new
+            existing_thread = next((t for t in channel_data[cid]["threads"] if t["id"] == tid), None)
+            prev_thread_msgs = existing_thread["messages"] if existing_thread else []
+            since_id = prev_thread_msgs[-1]["id"] if prev_thread_msgs else None
 
-            channel_data[cid]["threads"].append(thread_info)
+            new_thread_msgs = await fetch_messages_since(thread, since_id=since_id)
+
+            if new_thread_msgs:
+                log.info(f"  → {len(new_thread_msgs)} NEW messages in thread '{thread.name}'")
+
+                thread_info = {
+                    "id": tid,
+                    "name": thread.name,
+                    "owner_id": str(thread.owner_id) if thread.owner_id else None,
+                    "message_count": thread.message_count if hasattr(thread, 'message_count') else len(new_thread_msgs),
+                    "created_at": thread.created_at.isoformat(),
+                    "archived": thread.archived,
+                    "messages": list(prev_thread_msgs) + new_thread_msgs,
+                }
+
+                # Tag only new messages
+                log.info(f"Extracting tags for {len(new_thread_msgs)} NEW messages in thread '{thread.name}'...")
+                new_tags = await tag_messages(new_thread_msgs, f"{channel.name}/{thread.name}")
+                new_tag_sources[tid] = {"thread": new_tags}
+
+                # Update or append thread
+                if existing_thread:
+                    for i, t in enumerate(channel_data[cid]["threads"]):
+                        if t["id"] == tid:
+                            channel_data[cid]["threads"][i] = thread_info
+                            break
+                else:
+                    channel_data[cid]["threads"].append(thread_info)
+            else:
+                log.info(f"  → No new messages in thread '{thread.name}'")
+                # Preserve existing tags entry if no new messages
+                if tid not in new_tag_sources:
+                    new_tag_sources[tid] = {"thread": {}}
+
             await asyncio.sleep(RATE_LIMIT_DELAY)
 
     await client.close()
@@ -178,15 +246,14 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
             categories[cat_name] = []
         categories[cat_name].append(ch_data)
 
-    # Build top-level tags dict from all _message_tags
-    all_tags: dict[str, dict[str, list[str]]] = {}
-    for cid, ch_data in channel_data.items():
-        if "_message_tags" in ch_data:
-            all_tags[cid] = {"channel": ch_data.pop("_message_tags")}
-        for thread in ch_data.get("threads", []):
-            if "_message_tags" in thread:
-                tid = thread["id"]
-                all_tags[tid] = {"thread": thread.pop("_message_tags")}
+    # Merge new tags with existing tags
+    merged_tags = dict(existing_tags)
+    for key, source_tags in new_tag_sources.items():
+        if key not in merged_tags:
+            merged_tags[key] = {}
+        for source, tags in source_tags.items():
+            if tags:
+                merged_tags[key][source] = tags
 
     result = {
         "guild": {
@@ -197,7 +264,7 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
         },
         "categories": categories,
         "channels": channel_data,
-        "tags": all_tags,
+        "tags": merged_tags,
         "crawled_at": datetime.utcnow().isoformat() + "Z",
     }
 
