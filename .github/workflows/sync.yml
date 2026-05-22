@@ -42,6 +42,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
+          REPO_URL="https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
+          
           # Archive data/docs BEFORE switching branches
           tar -czf /tmp/archive.tar.gz data/ docs/
           
@@ -54,4 +56,4 @@ jobs:
           
           git add data/ docs/
           git commit -m "chore: sync Discord data $(date -u +'%Y-%m-%dT%H:%MZ')"
-          git push origin gh-pages --force
+          git push "$REPO_URL" gh-pages --force
