@@ -280,6 +280,7 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
             await client.close()
             raise
 
+    await client.start(BOT_TOKEN)
     return result
 
 
@@ -290,13 +291,7 @@ def run_crawler():
         message_content=True,
         guilds=True,
     )
-    client = discord.Client(intents=intents)
-    try:
-        client.run(BOT_TOKEN, log_handler=None)
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        raise
+    return asyncio.run(crawl_guild(intents))
 
 
 if __name__ == "__main__":
