@@ -180,7 +180,13 @@
                   <span class="text-sm font-medium text-[#d4d4d8] group-hover:text-white transition-colors">{{ msg.author_name }}</span>
                   <span class="text-xs text-[#3f3f46]">{{ msg.timestamp|datetime }}</span>
                 </div>
-                <p class="text-sm text-[#71717a] mt-1 line-clamp-2 leading-relaxed">{{ msg.content }}</p>
+                {% if msg.content|length > 200 %}
+                <p class="text-sm text-[#71717a] mt-1 leading-relaxed">{{ msg.content[:200] }}</p>
+                <button class="text-xs text-[#52525b] hover:text-[#a1a1aa] mt-1 transition-colors" onclick="this.nextElementSibling.classList.remove('hidden'); this.classList.add('hidden')">...더보기</button>
+                <p class="text-sm text-[#71717a] mt-1 leading-relaxed hidden">{{ msg.content }}</p>
+                {% else %}
+                <p class="text-sm text-[#71717a] mt-1 leading-relaxed">{{ msg.content }}</p>
+                {% endif %}
                 {% if msg.attachments %}
                 <div class="flex flex-wrap gap-2 mt-2">
                   {% for att in msg.attachments[:3] %}
