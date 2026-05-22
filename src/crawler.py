@@ -112,9 +112,14 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
     @client.event
     async def on_ready():
         log.info(f"Logged in as {client.user}")
+        if not GUILD_ID:
+            log.error("DISCORD_GUILD_ID is not set")
+            await client.close()
+            return
+
         guild = client.get_guild(int(GUILD_ID))
         if not guild:
-            log.error(f"Guild {GUILD_ID} not found")
+            log.error(f"Guild {GUILD_ID} not found (bot may not be in the guild)")
             await client.close()
             return
 
