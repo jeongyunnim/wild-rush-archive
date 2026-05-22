@@ -9,6 +9,7 @@ from typing import Any
 
 import discord
 from discord import Thread
+from discord.http import Route
 
 from .config import BOT_TOKEN, GUILD_ID, CHANNEL_IDS, OUTPUT_DIR, MESSAGE_BATCH_SIZE, MAX_MESSAGES_PER_THREAD, RATE_LIMIT_DELAY
 
@@ -50,13 +51,11 @@ async def fetch_messages_from_thread(
 ) -> list[dict[str, Any]]:
     """Fetch messages from a thread, optionally after since_id."""
     messages = []
-    last_id = None
 
     async for msg in thread.history(limit=MAX_MESSAGES_PER_THREAD, after=discord.Object(id=since_id) if since_id else None):
         if msg.author.bot and msg.author.id == thread.owner_id:
             continue  # skip auto-setup messages
         messages.append(clean_message(msg))
-        last_id = msg.id
 
     return messages  # oldest first
 
@@ -70,25 +69,20 @@ async def fetch_channel_threads(client: discord.Client, channel_id: int) -> list
         if not ch:
             return threads
 
-        # Fetch archive info for forum channels (type=15) or channels with threads
-        # For each channel, also check public archived threads
-        # We'll use the REST API endpoint for archived public threads
-        # via the bot's HTTP session
         bot = client._connection
 
-        # Active threads (joined threads in channel)
+        # Active threads in the channel
         for thread in ch.threads:
             threads.append(thread)
 
-        # Fetch public archived threads via API
+        # Fetch public archived threads via REST API
         try:
-            resp = await bot.http.get(f"channels/{channel_id}/threads/archived/public")
+            route = Route('GET', '/channels/{channel_id}/threads/archived/public', channel_id=channel_id)
+            resp = await bot.http.request(route)
             if resp:
                 for tdata in resp.get("threads", []):
-                    # Check if we already have this thread
                     if any(t.id == int(tdata["id"]) for t in threads):
                         continue
-                    # Create a Thread object from API data (no cache lookup needed)
                     from discord import Thread as DiscordThread
                     thread = DiscordThread(state=bot, data=tdata)
                     threads.append(thread)
@@ -100,20 +94,18 @@ async def fetch_channel_threads(client: discord.Client, channel_id: int) -> list
     return threads
 
 
+def _load_existing() -> dict[str, Any]:
+    """Load existing guild_data.json if present."""
+    path = os.path.join(OUTPUT_DIR, "guild_data.json")
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+
 async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
     """Main crawl function."""
     result = {}
-
-    class FakeMessage:
-        """Minimal message object for REST-only threads."""
-        def __init__(self, data, thread, http):
-            self.id = int(data["id"])
-            self.channel = thread
-            self.author = type("U", (), {"id": int(data.get("author", {}).get("id", 0)), "display_name": data.get("author", {}).get("username", "unknown"), "display_avatar": type("A", (), {"url": None, "is_static": lambda: True})()})()
-            self.content = data.get("content", "")
-            self.created_at = datetime.fromisoformat(data["timestamp"].replace("Z", "+00:00"))
-            self.attachments = []
-            self.reactions = []
 
     client = discord.Client(intents=intents)
 
@@ -137,8 +129,7 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
 
         channel_data = {}
         new_tag_sources = {}
-        all_new_messages = {}  # channel_id -> list of new messages
-        processed_threads = set()
+        processed_threads: set[int] = set()
 
         for channel_id, ch_info in existing.get("channels", {}).items():
             channel_data[channel_id] = ch_info
@@ -151,7 +142,6 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
                     continue
 
                 log.info(f"Channel '{ch.name}': {len(ch.threads)} active threads")
-                log.info(f"Fetching messages from: {ch.name} (ID: {ch.id})")
 
                 fetched_messages = []
                 async for msg in ch.history(limit=MESSAGE_BATCH_SIZE, after=discord.Object(id="0")):
@@ -167,32 +157,27 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
 
                 if new_msgs:
                     log.info(f"  → {len(new_msgs)} NEW messages in '{ch.name}'")
-
-                    # Tag new messages
                     log.info(f"Extracting tags for {len(new_msgs)} NEW messages in '{ch.name}'...")
                     new_tags = await tag_messages(new_msgs, ch.name)
                     new_tag_sources[str(ch.id)] = {"channel": new_tags}
+                else:
+                    log.info(f"  → No new messages in '{ch.name}'")
+                    new_tag_sources[str(ch.id)] = existing_tags.get(str(ch.id), {"channel": {}})
 
-                    # Store new messages
-                    if str(ch.id) not in all_new_messages:
-                        all_new_messages[str(ch.id)] = []
-
+                # Ensure channel entry exists
+                if str(ch.id) not in channel_data:
                     channel_data[str(ch.id)] = {
                         "id": str(ch.id),
                         "name": ch.name,
                         "category": ch.category.name if ch.category else "기타",
-                        "messages": fetched_messages,
-                        "threads": channel_data.get(str(ch.id), {}).get("threads", []),
+                        "messages": [],
+                        "threads": [],
                     }
-                else:
-                    log.info(f"  → No new messages in '{ch.name}'")
-                    existing_entry = existing.get("channels", {}).get(str(ch.id), {})
-                    channel_data[str(ch.id)] = existing_entry
-                    new_tag_sources[str(ch.id)] = existing_tags.get(str(ch.id), {"channel": {}})
+                channel_data[str(ch.id)]["messages"] = fetched_messages
 
                 # Fetch all threads (active + archived public)
                 all_threads = await fetch_channel_threads(client, ch.id)
-                log.info(f"  → Found {len(all_threads)} total threads (active={len(ch.threads)}, archived={len(all_threads)-len(ch.threads) if all_threads else 0})")
+                log.info(f"  → Found {len(all_threads)} total threads (active={len(ch.threads)}, archived={max(0, len(all_threads)-len(ch.threads))})")
 
                 if not all_threads:
                     log.info(f"  → No threads in '{ch.name}'")
@@ -212,12 +197,8 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
 
                     thread_messages = await fetch_messages_from_thread(thread, since_id=since_id)
 
-                    if thread_messages:
-                        log.info(f"  → {len(thread_messages)} TOTAL messages in thread '{thread.name}'")
-                    else:
-                        log.info(f"  → No messages in thread '{thread.name}'")
+                    log.info(f"  → Thread '{thread.name}': {len(thread_messages)} messages")
 
-                    # Update thread data
                     thread_info = {
                         "id": tid,
                         "name": thread.name,
@@ -236,7 +217,7 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
                     else:
                         channel_data[str(ch.id)]["threads"].append(thread_info)
 
-                    new_tag_sources[tid] = {"thread": {}}
+                    new_tag_sources.setdefault(tid, {"thread": {}})
 
                     await asyncio.sleep(RATE_LIMIT_DELAY)
 
@@ -261,25 +242,23 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
                         merged_tags[key][source] = {}
                     merged_tags[key][source].update(tags)
 
-        # Tag ALL messages in threads (for initial tagging of old messages)
+        # Tag ALL messages in threads (initial tagging)
         log.info("Tagging all thread messages...")
         for cid, ch_data in channel_data.items():
             for thread in ch_data.get("threads", []):
                 tid = thread["id"]
                 msgs = thread.get("messages", [])
-                if msgs:
-                    existing_thread_tags = merged_tags.get(tid, {}).get("thread", {})
-                    untagged = [m for m in msgs if str(m["id"]) not in existing_thread_tags]
-                    if untagged:
-                        log.info(f"Tagging {len(untagged)} untagged messages in thread '{thread['name']}'...")
-                        thread_name = f"{ch_data['name']}/{thread['name']}"
-                        new_tags = await tag_messages(untagged, thread_name)
-                        if tid not in merged_tags:
-                            merged_tags[tid] = {"channel": {}, "thread": {}}
-                        if "thread" not in merged_tags[tid]:
-                            merged_tags[tid]["thread"] = {}
-                        merged_tags[tid]["thread"].update(new_tags)
-                        await asyncio.sleep(RATE_LIMIT_DELAY)
+                if not msgs:
+                    continue
+                existing_thread_tags = merged_tags.get(tid, {}).get("thread", {})
+                untagged = [m for m in msgs if str(m["id"]) not in existing_thread_tags]
+                if untagged:
+                    log.info(f"Tagging {len(untagged)} untagged messages in thread '{thread['name']}'...")
+                    thread_name = f"{ch_data['name']}/{thread['name']}"
+                    new_tags = await tag_messages(untagged, thread_name)
+                    merged_tags.setdefault(tid, {"channel": {}, "thread": {}})
+                    merged_tags[tid].setdefault("thread", {}).update(new_tags)
+                    await asyncio.sleep(RATE_LIMIT_DELAY)
 
         # Summarize all threads
         log.info(f"Summarizing {len([t for ch in channel_data.values() for t in ch.get('threads', [])])} threads...")
@@ -316,15 +295,6 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
         log.info(f"Saved to {out_path}")
 
         return result
-
-
-def _load_existing() -> dict[str, Any]:
-    """Load existing guild_data.json if present."""
-    path = os.path.join(OUTPUT_DIR, "guild_data.json")
-    if os.path.exists(path):
-        with open(path, encoding="utf-8") as f:
-            return json.load(f)
-    return {}
 
 
 def run_crawler():
