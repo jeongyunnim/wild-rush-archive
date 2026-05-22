@@ -48,32 +48,61 @@ def build_batch_content(messages: list[dict[str, Any]], channel: str) -> str:
     return f"Channel: {channel}\n" + "\n".join(lines) + "\nExtract tags for each message above. Respond with valid JSON only."
 
 
+def _find_json_object(text: str) -> str | None:
+    """Find the first balanced JSON object in text. Returns the object string or None."""
+    start = text.find('{')
+    if start == -1:
+        return None
+
+    depth = 0
+    in_string = False
+    escape = False
+
+    for i in range(start, len(text)):
+        ch = text[i]
+
+        if escape:
+            escape = False
+            continue
+
+        if ch == '\\':
+            escape = True
+            continue
+
+        if ch == '"' and not escape:
+            in_string = not in_string
+            continue
+
+        if in_string:
+            continue
+
+        if ch == '{':
+            depth += 1
+        elif ch == '}':
+            depth -= 1
+            if depth == 0:
+                return text[start:i + 1]
+
+    return None
+
+
 def parse_batch_response(raw_text: str) -> dict[str, list[str]]:
     """Parse batch API response, returns {msg_id: [tags]}."""
     if not raw_text or not raw_text.strip():
         return {}
 
-    # Try to find JSON object in the response
-    # First try: find the last complete-looking JSON object
+    obj = _find_json_object(raw_text)
+    if obj is None:
+        log.warning("Batch parse failed: no JSON object found")
+        return {}
+
     try:
-        parsed = json.loads(raw_text)
+        parsed = json.loads(obj)
         results = parsed.get("results", [])
         return {item["id"]: item.get("tags", []) for item in results if item.get("id")}
-    except json.JSONDecodeError:
-        pass
-
-    # Second try: extract JSON using regex for opening { to last }
-    json_match = re.search(r'(\{.*\})', raw_text, re.DOTALL)
-    if json_match:
-        try:
-            parsed = json.loads(json_match.group(1))
-            results = parsed.get("results", [])
-            return {item["id"]: item.get("tags", []) for item in results if item.get("id")}
-        except json.JSONDecodeError as e:
-            log.warning(f"Batch parse failed: {e}")
-
-    log.warning(f"Batch parse failed: no valid JSON found in response")
-    return {}
+    except (json.JSONDecodeError, KeyError) as e:
+        log.warning(f"Batch parse failed: {e}")
+        return {}
 
 
 async def extract_tags_batch(
