@@ -12,11 +12,12 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout main
+      - name: Checkout main (full clone)
         uses: actions/checkout@v4
         with:
           ref: main
           fetch-depth: 0
+          sparse-checkout: ''
           persist-credentials: false
 
       - name: Set up Python
@@ -42,22 +43,14 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Create a fresh git dir for gh-pages content
-          mkdir -p /tmp/gh-pages-repo
-          cd /tmp/gh-pages-repo
-          git init -b gh-pages
-          git remote add origin $GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Create a fresh orphan gh-pages branch with only data/ and docs/
+          git checkout --orphan gh-pages
+          git rm -rf .
           
-          # Pull existing gh-pages if it exists
-          git fetch origin gh-pages --depth=1 2>/dev/null && git reset --hard origin/gh-pages || git reset --hard HEAD
-          
-          # Overwrite with newly generated data/docs
+          # Copy generated data and docs
           cp -r $GITHUB_WORKSPACE/data .
           cp -r $GITHUB_WORKSPACE/docs .
-          rm -rf data/.git docs/.git 2>/dev/null || true
           
           git add data/ docs/
-          git diff --quiet || git commit -m "chore: sync Discord data $(date -u +'%Y-%m-%dT%H:%MZ')"
+          git commit -m "chore: sync Discord data $(date -u +'%Y-%m-%dT%H:%MZ')"
           git push origin gh-pages --force
