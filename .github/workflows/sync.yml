@@ -17,7 +17,6 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
-          sparse-checkout: ''
           persist-credentials: false
 
       - name: Set up Python
@@ -43,13 +42,15 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Create a fresh orphan gh-pages branch with only data/ and docs/
+          # Archive data/docs BEFORE switching branches
+          tar -czf /tmp/archive.tar.gz data/ docs/
+          
+          # Create a fresh orphan gh-pages branch
           git checkout --orphan gh-pages
           git rm -rf .
           
-          # Copy generated data and docs
-          cp -r $GITHUB_WORKSPACE/data .
-          cp -r $GITHUB_WORKSPACE/docs .
+          # Restore from archive
+          tar -xzf /tmp/archive.tar.gz
           
           git add data/ docs/
           git commit -m "chore: sync Discord data $(date -u +'%Y-%m-%dT%H:%MZ')"
