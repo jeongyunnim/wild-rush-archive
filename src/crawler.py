@@ -13,6 +13,7 @@ from .config import BOT_TOKEN, GUILD_ID, CHANNEL_IDS, OUTPUT_DIR, MESSAGE_BATCH_
 
 from .tagger import tag_messages
 from .summarizer import summarize_all_threads
+from .channel_summarizer import generate_all_summaries
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger(__name__)
@@ -268,6 +269,12 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
                 "thread_summaries": thread_summaries,
                 "crawled_at": datetime.utcnow().isoformat() + "Z",
             }
+
+            # Generate channel-level topic summaries
+            log.info("Generating channel summaries...")
+            existing_channel_summaries = existing.get("channel_summaries", {})
+            result["channel_summaries"] = existing_channel_summaries
+            await generate_all_summaries(result)
 
             os.makedirs(OUTPUT_DIR, exist_ok=True)
             out_path = os.path.join(OUTPUT_DIR, "guild_data.json")

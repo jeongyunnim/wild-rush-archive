@@ -40,6 +40,8 @@ def render_site():
     channels = data["channels"]
     tags = data.get("tags", {})
     thread_summaries = data.get("thread_summaries", {})
+    channel_summaries = data.get("channel_summaries", {})
+    homepage_decisions = data.get("homepage_decisions", [])
 
     # Base output dir = project_root/docs/ (for GitHub Pages serving from root)
     base_out = Path(OUTPUT_DIR).parent / "docs"
@@ -60,6 +62,8 @@ def render_site():
         guild=guild,
         categories=categories,
         channels=channels,
+        channel_summaries=channel_summaries,
+        homepage_decisions=homepage_decisions,
         base_path=base_path,
         rendered_at=datetime.utcnow().isoformat(),
     )
@@ -70,9 +74,11 @@ def render_site():
     # --- Render channel pages ---
     for cid, channel in channels.items():
         ch_template = env.get_template("channel.html")
+        ch_summary = channel_summaries.get(cid, {})
         ch_html = ch_template.render(
             guild=guild,
             channel=channel,
+            channel_summary=ch_summary,
             categories=categories,
             tags=tags,
             base_path=base_path,
