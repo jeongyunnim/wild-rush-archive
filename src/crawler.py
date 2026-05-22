@@ -13,6 +13,7 @@ from discord import Thread
 from .config import BOT_TOKEN, GUILD_ID, CHANNEL_IDS, OUTPUT_DIR, MESSAGE_BATCH_SIZE, MAX_MESSAGES_PER_THREAD, RATE_LIMIT_DELAY
 
 from .tagger import tag_messages
+from .summarizer import summarize_all_threads
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger(__name__)
@@ -122,6 +123,7 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
     existing_channel_ids = {ch["id"]: ch for ch in existing.get("channels", {}).values()}
     existing_msg_ids = get_existing_message_ids(existing.get("channels", {}))
     existing_tags = existing.get("tags", {})
+    existing_summaries = existing.get("thread_summaries", {})
 
     log.info(f"Loaded {len(existing_msg_ids)} existing messages from previous crawl")
 
@@ -255,6 +257,10 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
             if tags:
                 merged_tags[key][source] = tags
 
+    # Summarize all threads
+    log.info(f"Summarizing {len([t for ch in channel_data.values() for t in ch.get('threads', [])])} threads...")
+    thread_summaries = await summarize_all_threads(channel_data, existing_summaries)
+
     result = {
         "guild": {
             "id": str(guild.id),
@@ -265,6 +271,7 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
         "categories": categories,
         "channels": channel_data,
         "tags": merged_tags,
+        "thread_summaries": thread_summaries,
         "crawled_at": datetime.utcnow().isoformat() + "Z",
     }
 

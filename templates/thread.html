@@ -114,6 +114,61 @@
           </div>
         </div>
 
+        <!-- Thread Summary -->
+        {% set summary = thread_summaries.get(thread.id, {}) %}
+        {% if summary and (summary.decision or summary.discussion) %}
+        <div class="mb-8 p-5 bg-[#111118] border border-[#1f1f1f] rounded-xl">
+          {% if summary.decision %}
+          <div class="mb-4">
+            <div class="flex items-center gap-1.5 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#52525b]"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+              <span class="text-[10px] font-semibold text-[#52525b] uppercase tracking-widest">결정 사항</span>
+            </div>
+            <p class="text-sm text-[#d4d4d8] leading-relaxed">{{ summary.decision }}</p>
+          </div>
+          {% endif %}
+          {% if summary.discussion %}
+          <div class="space-y-3">
+            <div class="flex items-center gap-1.5 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#52525b]"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              <span class="text-[10px] font-semibold text-[#52525b] uppercase tracking-widest">논의 요약</span>
+            </div>
+            {% for topic in summary.discussion[:5] %}
+            <div class="border-l-2 border-[#2a2a2a] pl-3">
+              <p class="text-xs font-medium text-[#71717a] mb-1">{{ topic.topic }}</p>
+              <ul class="space-y-1">
+                {% for point in topic.points[:4] %}
+                <li class="text-xs text-[#52525b] flex items-start gap-1.5">
+                  <span class="text-[#3f3f46] mt-0.5">·</span>
+                  <span>{{ point }}</span>
+                </li>
+                {% endfor %}
+              </ul>
+              {% if topic.speakers %}
+              <p class="text-[10px] text-[#3f3f46] mt-1.5">발언: {{ topic.speakers|join(', ') }}</p>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+          {% if summary.links %}
+          <div class="mt-4 pt-4 border-t border-[#1f1f1f]">
+            <div class="flex items-center gap-1.5 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#52525b]"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+              <span class="text-[10px] font-semibold text-[#52525b] uppercase tracking-widest">관련 자료</span>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              {% for link in summary.links[:5] %}
+              <a href="{{ link.url }}" target="_blank" class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#0d0d14] border border-[#1f1f1f] rounded-lg text-xs text-[#71717a] hover:text-[#a1a1aa] hover:border-[#3f3f46] transition-colors">
+                {{ link.description or link.url }}
+              </a>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+        </div>
+        {% endif %}
+
         <!-- Messages -->
         <div>
           {% for msg in thread.messages %}

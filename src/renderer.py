@@ -39,6 +39,7 @@ def render_site():
     categories = data["categories"]
     channels = data["channels"]
     tags = data.get("tags", {})
+    thread_summaries = data.get("thread_summaries", {})
 
     # Base output dir = project_root/docs/ (for GitHub Pages serving from root)
     base_out = Path(OUTPUT_DIR).parent / "docs"
@@ -92,6 +93,7 @@ def render_site():
                 thread=thread,
                 categories=categories,
                 tags=tags,
+                thread_summaries=thread_summaries,
                 base_path=base_path,
                 rendered_at=datetime.utcnow().isoformat(),
             )
