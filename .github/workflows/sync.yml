@@ -3,7 +3,7 @@ name: Sync Discord Archive
 on:
   schedule:
     - cron: '0 6 * * *'  # Daily at 06:00 UTC = 15:00 KST
-  workflow_dispatch:        # Manual trigger
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -12,17 +12,12 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout main (source code only)
+      - name: Checkout main
         uses: actions/checkout@v4
         with:
           ref: main
-          sparse-checkout: |
-            src/
-            templates/
-            requirements.txt
-            .gitignore
-            README.md
-          sparse-checkout-cone-mode: false
+          fetch-depth: 0
+          persist-credentials: false
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -30,8 +25,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Run crawler
         run: python -m src.crawler
@@ -47,7 +41,23 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout gh-pages || git checkout --orphan gh-pages
+          
+          # Create a fresh git dir for gh-pages content
+          mkdir -p /tmp/gh-pages-repo
+          cd /tmp/gh-pages-repo
+          git init -b gh-pages
+          git remote add origin $GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Pull existing gh-pages if it exists
+          git fetch origin gh-pages --depth=1 2>/dev/null && git reset --hard origin/gh-pages || git reset --hard HEAD
+          
+          # Overwrite with newly generated data/docs
+          cp -r $GITHUB_WORKSPACE/data .
+          cp -r $GITHUB_WORKSPACE/docs .
+          rm -rf data/.git docs/.git 2>/dev/null || true
+          
           git add data/ docs/
           git diff --quiet || git commit -m "chore: sync Discord data $(date -u +'%Y-%m-%dT%H:%MZ')"
           git push origin gh-pages --force
