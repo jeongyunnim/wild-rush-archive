@@ -206,6 +206,17 @@
                   {% endfor %}
                 </div>
                 {% endif %}
+                {% set msg_tags = tags.get(channel.id, {}).get('channel', {}).get(msg.id, []) %}
+                {% if msg_tags %}
+                <div class="flex flex-wrap gap-1 mt-2">
+                  {% for tag in msg_tags %}
+                  <a href="{{ base_path }}/tags/{{ tag|urlencode }}/index.html"
+                     class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#1a1a24] border border-[#2a2a2a] text-xs text-[#71717a] hover:text-[#a1a1aa] hover:border-[#3f3f46] transition-colors">
+                    # {{ tag }}
+                  </a>
+                  {% endfor %}
+                </div>
+                {% endif %}
               </div>
             </div>
             {% endfor %}

@@ -174,6 +174,18 @@
                 {% endfor %}
               </div>
               {% endif %}
+              {% set thread_id = thread.id %}
+              {% set msg_tags = tags.get(thread_id, {}).get('thread', {}).get(msg.id, []) %}
+              {% if msg_tags %}
+              <div class="flex flex-wrap gap-1.5 mt-3">
+                {% for tag in msg_tags %}
+                <a href="{{ base_path }}/tags/{{ tag|urlencode }}/index.html"
+                   class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#111118] border border-[#1f1f1f] text-xs text-[#71717a] hover:text-[#a1a1aa] hover:border-[#3f3f46] transition-colors">
+                  # {{ tag }}
+                </a>
+                {% endfor %}
+              </div>
+              {% endif %}
             </div>
           </div>
           {% endfor %}

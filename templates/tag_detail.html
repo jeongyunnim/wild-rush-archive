@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>#{{ tag }} — {{ guild.name }} Archive</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } }
+    }
+  </script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+    .sidebar-scroll { scrollbar-width: thin; }
+  </style>
+</head>
+<body class="bg-[#0a0a0f] text-[#e0e0e6]">
+
+  <!-- Mobile Top Bar -->
+  <div class="lg:hidden flex items-center justify-between px-4 py-3 border-b border-[#1f1f1f] bg-[#0d0d14]">
+    <button id="sidebar-toggle" class="p-2 rounded-lg hover:bg-[#1a1a24] transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </button>
+    <span class="text-sm font-medium text-white"># {{ tag }}</span>
+    <div class="w-8"></div>
+  </div>
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden"></div>
+
+  <div class="flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-64 flex-shrink-0 flex flex-col bg-[#0d0d14] border-r border-[#1f1f1f] overflow-hidden fixed inset-y-0 left-0 z-50 transform -translate-x-full lg:relative lg:translate-x-0 transition-transform duration-200">
+      <div class="px-4 py-4 border-b border-[#1f1f1f]">
+        <div class="flex items-center gap-2.5">
+          {% if guild.icon_url %}
+          <img src="{{ guild.icon_url }}" alt="{{ guild.name }}" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+          {% else %}
+          <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#4f46e5] to-[#7c3aed] flex items-center justify-center text-sm font-semibold text-white flex-shrink-0">{{ guild.name[0] }}</div>
+          {% endif %}
+          <div class="min-w-0">
+            <p class="text-sm font-semibold text-white truncate">{{ guild.name }}</p>
+            <p class="text-[10px] text-[#52525b]">Discord Archive</p>
+          </div>
+        </div>
+      </div>
+      <nav class="flex-1 overflow-y-auto sidebar-scroll py-2">
+        {% for category, channels in categories.items() %}
+        <div class="mb-1">
+          <div class="px-4 py-1.5 flex items-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#3f3f46] flex-shrink-0"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+            <span class="text-[10px] font-semibold text-[#52525b] uppercase tracking-widest">{{ category }}</span>
+          </div>
+          {% for ch in channels %}
+          <a href="{{ base_path }}/channels/{{ ch.id }}/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">{{ ch.name }}</span>
+          </a>
+          {% endfor %}
+        </div>
+        {% endfor %}
+        <div class="mt-4 border-t border-[#1f1f1f] pt-2">
+          <a href="{{ base_path }}/tags/index.html" class="flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg bg-[#1a1a24] cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d4d4d8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+            <span class="text-xs text-white">태그</span>
+          </a>
+        </div>
+      </nav>
+      <div class="px-4 py-3 border-t border-[#1f1f1f]">
+        <p class="text-[10px] text-[#3f3f46]">마지막 동기화<br>{{ rendered_at }} UTC</p>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto flex flex-col">
+      <div class="flex-1 max-w-5xl mx-auto px-4 lg:px-8 py-6 lg:py-8">
+
+        <nav class="flex items-center gap-2 text-sm text-[#52525b] mb-6">
+          <a href="{{ base_path }}/index.html" class="hover:text-[#a1a1aa] transition-colors">{{ guild.name }}</a>
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <a href="{{ base_path }}/tags/index.html" class="hover:text-[#a1a1aa] transition-colors">태그</a>
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <span class="text-[#d4d4d8]"># {{ tag }}</span>
+        </nav>
+
+        <div class="mb-8 pb-6 border-b border-[#1f1f1f]">
+          <div class="flex items-center gap-2 mb-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#52525b]"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+            <h1 class="text-xl font-semibold text-white tracking-tight"># {{ tag }}</h1>
+          </div>
+          <p class="text-sm text-[#52525b]">{{ occurrences|length }}개 메시지</p>
+        </div>
+
+        <div class="space-y-3">
+          {% for ch_id, msg_id, src_type in occurrences %}
+          {% set msg_list = channels[ch_id].get('threads', []) if src_type == 'thread' else channels[ch_id].get('messages', []) %}
+          {% set msg = msg_list | selectattr('id', 'equalto', msg_id) | first %}
+          {% set parent_channel = channels[ch_id] if src_type == 'thread' else None %}
+          {% if msg %}
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                {% if src_type == 'channel' %}
+                <a href="{{ base_path }}/channels/{{ ch_id }}/index.html" class="hover:text-[#71717a] transition-colors"># {{ channels[ch_id].name }}</a>
+                {% else %}
+                <a href="{{ base_path }}/channels/{{ ch_id }}/index.html" class="hover:text-[#71717a] transition-colors"># {{ parent_channel.name }}</a>
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <a href="{{ base_path }}/threads/{{ msg_id }}/index.html" class="hover:text-[#71717a] transition-colors">🧵 {{ parent_channel.threads | selectattr('id', 'equalto', msg_id) | map(attribute='name') | first }}</a>
+                {% endif %}
+              </div>
+              <div class="flex gap-3">
+                {% if msg.author_avatar %}
+                <img src="{{ msg.author_avatar }}" alt="{{ msg.author_name }}" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                {% else %}
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#4f46e5] to-[#7c3aed] flex items-center justify-center text-xs font-medium text-white flex-shrink-0">{{ msg.author_name[0] }}</div>
+                {% endif %}
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">{{ msg.author_name }}</span>
+                    <span class="text-xs text-[#3f3f46]">{{ msg.timestamp }}</span>
+                  </div>
+                  {% if msg.content %}
+                  {% if msg.content|length > 200 %}
+                  <p class="text-sm text-[#71717a] mt-1">{{ msg.content[:200] }}</p>
+                  <button class="text-xs text-[#52525b] hover:text-[#a1a1aa] mt-1 transition-colors" onclick="this.nextElementSibling.classList.remove('hidden'); this.classList.add('hidden')">...더보기</button>
+                  <p class="text-sm text-[#71717a] mt-1 hidden">{{ msg.content }}</p>
+                  {% else %}
+                  <p class="text-sm text-[#71717a] mt-1">{{ msg.content }}</p>
+                  {% endif %}
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+
+        <div class="text-center text-xs text-[#3f3f46] py-8 border-t border-[#1f1f1f] mt-8">
+          마지막 동기화: {{ rendered_at }} UTC
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var toggle = document.getElementById('sidebar-toggle');
+      var sidebar = document.getElementById('sidebar');
+      var overlay = document.getElementById('sidebar-overlay');
+      if (toggle && sidebar && overlay) {
+        toggle.addEventListener('click', function() {
+          sidebar.classList.toggle('-translate-x-full');
+          sidebar.classList.toggle('translate-x-0');
+          overlay.classList.toggle('hidden');
+        });
+        overlay.addEventListener('click', function() {
+          sidebar.classList.add('-translate-x-full');
+          sidebar.classList.remove('translate-x-0');
+          overlay.classList.add('hidden');
+        });
+      }
+    });
+  </script>
+</body>
+</html>

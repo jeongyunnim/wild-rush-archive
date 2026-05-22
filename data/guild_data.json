@@ -2382,6 +2382,31 @@
               }
             ],
             "thread_id": null
+          },
+          {
+            "id": "1507061685398147185",
+            "author_id": "1489905117304979466",
+            "author_name": "김현중",
+            "author_avatar": "https://cdn.discordapp.com/avatars/1489905117304979466/f7f2e9361e8a54ce6e72580ac7b967af.png?size=1024",
+            "author_roles": [],
+            "content": "https://youtu.be/bWXazVhlyxQ?si=EzHLsw-OBbHvIS_2",
+            "timestamp": "2026-05-21T16:45:05.651000+00:00",
+            "edited_at": null,
+            "attachments": [],
+            "embeds": [
+              {
+                "title": "Rage Against The Machine - Killing In the Name (Official HD Video)",
+                "description": "Official HD music video for \"Killing In the Name\" by Rage Against the Machine\nListen to RATM: https://rageatm.lnk.to/listenYD \nWatch more videos by Rage Against the Machine: https://rageatm.lnk.to/listenYD/youtube \n\nSubscribe to the official RATM YouTube channel: https://rageatm.lnk.to/subscribeYD\n\nFollow RATM: \nFacebook: https://rageatm.lnk.to/...",
+                "url": "https://www.youtube.com/watch?v=bWXazVhlyxQ"
+              }
+            ],
+            "reactions": [
+              {
+                "emoji": "😮",
+                "count": 1
+              }
+            ],
+            "thread_id": null
           }
         ]
       },
@@ -9092,6 +9117,31 @@
             }
           ],
           "thread_id": null
+        },
+        {
+          "id": "1507061685398147185",
+          "author_id": "1489905117304979466",
+          "author_name": "김현중",
+          "author_avatar": "https://cdn.discordapp.com/avatars/1489905117304979466/f7f2e9361e8a54ce6e72580ac7b967af.png?size=1024",
+          "author_roles": [],
+          "content": "https://youtu.be/bWXazVhlyxQ?si=EzHLsw-OBbHvIS_2",
+          "timestamp": "2026-05-21T16:45:05.651000+00:00",
+          "edited_at": null,
+          "attachments": [],
+          "embeds": [
+            {
+              "title": "Rage Against The Machine - Killing In the Name (Official HD Video)",
+              "description": "Official HD music video for \"Killing In the Name\" by Rage Against the Machine\nListen to RATM: https://rageatm.lnk.to/listenYD \nWatch more videos by Rage Against the Machine: https://rageatm.lnk.to/listenYD/youtube \n\nSubscribe to the official RATM YouTube channel: https://rageatm.lnk.to/subscribeYD\n\nFollow RATM: \nFacebook: https://rageatm.lnk.to/...",
+              "url": "https://www.youtube.com/watch?v=bWXazVhlyxQ"
+            }
+          ],
+          "reactions": [
+            {
+              "emoji": "😮",
+              "count": 1
+            }
+          ],
+          "thread_id": null
         }
       ]
     },
@@ -13425,5 +13475,24 @@
       "messages": []
     }
   },
-  "crawled_at": "2026-05-21T15:46:37.358831Z"
+  "tags": {
+    "1489895992047308902": {},
+    "1489896035802153051": {},
+    "1489896325741805608": {},
+    "1489896356062564352": {
+      "channel": {
+        "1507061685398147185": [
+          "선곡/성현",
+          "자원/유튜브"
+        ]
+      }
+    },
+    "1489939250999853197": {},
+    "1489965483817046147": {},
+    "1489977686343417988": {},
+    "1490699203402535082": {},
+    "1491433466947047454": {},
+    "1501077542592057374": {}
+  },
+  "crawled_at": "2026-05-22T03:20:11.290051Z"
 }

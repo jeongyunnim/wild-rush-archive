@@ -38,6 +38,7 @@ def render_site():
     guild = data["guild"]
     categories = data["categories"]
     channels = data["channels"]
+    tags = data.get("tags", {})
 
     # Base output dir = project_root/docs/ (for GitHub Pages serving from root)
     base_out = Path(OUTPUT_DIR).parent / "docs"
@@ -47,6 +48,8 @@ def render_site():
 
     channels_out.mkdir(parents=True, exist_ok=True)
     threads_out.mkdir(parents=True, exist_ok=True)
+    tags_out = base_out / "tags"
+    tags_out.mkdir(parents=True, exist_ok=True)
 
     base_path = "/wild-rush-archive"
 
@@ -70,6 +73,7 @@ def render_site():
             guild=guild,
             channel=channel,
             categories=categories,
+            tags=tags,
             base_path=base_path,
             rendered_at=datetime.utcnow().isoformat(),
         )
@@ -87,6 +91,7 @@ def render_site():
                 channel=channel,
                 thread=thread,
                 categories=categories,
+                tags=tags,
                 base_path=base_path,
                 rendered_at=datetime.utcnow().isoformat(),
             )
@@ -95,6 +100,47 @@ def render_site():
             with open(th_path, "w", encoding="utf-8") as f:
                 f.write(th_html)
             log.info(f"Rendered: {th_path}")
+
+    # --- Render tag index & detail pages ---
+    all_tags: dict[str, list[tuple]] = {}
+    for cid, ch_tags in tags.items():
+        for src_type, msg_tags in ch_tags.items():
+            for msg_id, tag_list in msg_tags.items():
+                for tag in tag_list:
+                    if tag not in all_tags:
+                        all_tags[tag] = []
+                    all_tags[tag].append((cid if src_type == "channel" else None, msg_id, src_type))
+
+    # Tag index page
+    env.filters["tag_count"] = lambda t: len(all_tags.get(t, []))
+    tag_index_template = env.get_template("tag_index.html")
+    tag_index_html = tag_index_template.render(
+        guild=guild,
+        categories=categories,
+        all_tags=sorted(all_tags.keys()),
+        base_path=base_path,
+        rendered_at=datetime.utcnow().isoformat(),
+    )
+    with open(tags_out / "index.html", "w", encoding="utf-8") as f:
+        f.write(tag_index_html)
+    log.info(f"Rendered tag index: {tags_out / 'index.html'}")
+
+    # Per-tag detail pages
+    tag_detail_template = env.get_template("tag_detail.html")
+    for tag, occurrences in all_tags.items():
+        tag_html = tag_detail_template.render(
+            guild=guild,
+            tag=tag,
+            occurrences=occurrences,
+            channels=channels,
+            base_path=base_path,
+            rendered_at=datetime.utcnow().isoformat(),
+        )
+        tag_path = tags_out / tag / "index.html"
+        tag_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(tag_path, "w", encoding="utf-8") as f:
+            f.write(tag_html)
+        log.info(f"Rendered tag: {tag_path}")
 
     log.info("All pages rendered successfully")
 

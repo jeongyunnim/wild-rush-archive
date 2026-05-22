@@ -1,6 +1,5 @@
 __pycache__/
 *.pyc
-data/guild_data.json
 .env
 *.egg-info/
 .Python
