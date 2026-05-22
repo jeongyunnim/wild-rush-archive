@@ -50,18 +50,30 @@ def build_batch_content(messages: list[dict[str, Any]], channel: str) -> str:
 
 def parse_batch_response(raw_text: str) -> dict[str, list[str]]:
     """Parse batch API response, returns {msg_id: [tags]}."""
-    # Try to find JSON in the response
-    json_match = re.search(r'\{[\s\S]*\}', raw_text)
-    if not json_match:
+    if not raw_text or not raw_text.strip():
         return {}
 
+    # Try to find JSON object in the response
+    # First try: find the last complete-looking JSON object
     try:
-        parsed = json.loads(json_match.group())
+        parsed = json.loads(raw_text)
         results = parsed.get("results", [])
         return {item["id"]: item.get("tags", []) for item in results if item.get("id")}
-    except (json.JSONDecodeError, KeyError) as e:
-        log.warning(f"Batch parse failed: {e}")
-        return {}
+    except json.JSONDecodeError:
+        pass
+
+    # Second try: extract JSON using regex for opening { to last }
+    json_match = re.search(r'(\{.*\})', raw_text, re.DOTALL)
+    if json_match:
+        try:
+            parsed = json.loads(json_match.group(1))
+            results = parsed.get("results", [])
+            return {item["id"]: item.get("tags", []) for item in results if item.get("id")}
+        except json.JSONDecodeError as e:
+            log.warning(f"Batch parse failed: {e}")
+
+    log.warning(f"Batch parse failed: no valid JSON found in response")
+    return {}
 
 
 async def extract_tags_batch(
