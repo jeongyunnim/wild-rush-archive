@@ -12,8 +12,17 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout main (source code only)
         uses: actions/checkout@v4
+        with:
+          ref: main
+          sparse-checkout: |
+            src/
+            templates/
+            requirements.txt
+            .gitignore
+            README.md
+          sparse-checkout-cone-mode: false
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -34,10 +43,11 @@ jobs:
       - name: Render HTML
         run: python -m src.renderer
 
-      - name: Commit and push
+      - name: Push to gh-pages
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout gh-pages || git checkout --orphan gh-pages
           git add data/ docs/
           git diff --quiet || git commit -m "chore: sync Discord data $(date -u +'%Y-%m-%dT%H:%MZ')"
-          git push
+          git push origin gh-pages --force
