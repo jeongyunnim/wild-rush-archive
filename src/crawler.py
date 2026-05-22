@@ -81,19 +81,19 @@ async def fetch_channel_threads(client: discord.Client, channel_id: int) -> list
             threads.append(thread)
 
         # Fetch public archived threads via API
-        resp = await bot.http.get(f"channels/{channel_id}/threads/archived/public")
-        if resp:
-            for tdata in resp.get("threads", []):
-                # Check if we already have this thread
-                if any(t.id == int(tdata["id"]) for t in threads):
-                    continue
-                # Create a minimal Thread object from dict data
-                thread = client.get_channel(int(tdata["id"]))
-                if thread is None:
-                    # Try to get from cache or create from data
+        try:
+            resp = await bot.http.get(f"channels/{channel_id}/threads/archived/public")
+            if resp:
+                for tdata in resp.get("threads", []):
+                    # Check if we already have this thread
+                    if any(t.id == int(tdata["id"]) for t in threads):
+                        continue
+                    # Create a Thread object from API data (no cache lookup needed)
                     from discord import Thread as DiscordThread
                     thread = DiscordThread(state=bot, data=tdata)
-                threads.append(thread)
+                    threads.append(thread)
+        except Exception as e:
+            log.warning(f"Could not fetch archived threads for channel {channel_id}: {e}")
     except Exception as e:
         log.warning(f"Error fetching threads for channel {channel_id}: {e}")
 
@@ -192,7 +192,10 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
 
                 # Fetch all threads (active + archived public)
                 all_threads = await fetch_channel_threads(client, ch.id)
-                log.info(f"  → Found {len(all_threads)} total threads")
+                log.info(f"  → Found {len(all_threads)} total threads (active={len(ch.threads)}, archived={len(all_threads)-len(ch.threads) if all_threads else 0})")
+
+                if not all_threads:
+                    log.info(f"  → No threads in '{ch.name}'")
 
                 for thread in all_threads:
                     if thread.id in processed_threads:
