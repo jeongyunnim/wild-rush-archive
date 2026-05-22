@@ -4,6 +4,7 @@ import asyncio
 import json
 import logging
 import os
+import sys
 from datetime import datetime
 from typing import Any
 
@@ -111,24 +112,24 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
 
     @client.event
     async def on_ready():
-        log.info(f"Logged in as {client.user}")
+        print(f"[CRAWLER START] discord.py on_ready fired", flush=True)
         if not GUILD_ID:
-            log.error("DISCORD_GUILD_ID is not set")
+            print("[CRAWLER ERROR] DISCORD_GUILD_ID not set", flush=True)
             await client.close()
             return
 
+        print(f"[CRAWLER] GUILD_ID={GUILD_ID}", flush=True)
         guild = client.get_guild(int(GUILD_ID))
         if not guild:
-            log.error(f"Guild {GUILD_ID} not found (bot may not be in the guild)")
+            print(f"[CRAWLER ERROR] Guild {GUILD_ID} not found (bot may not be in the guild)", flush=True)
             await client.close()
             return
 
-        log.info(f"Guild: {guild.name} (ID: {guild.id})")
-
-        # Log categories and channels available
-        log.info(f"Guild categories: {len(guild.categories)}")
+        print(f"[CRAWLER] Guild: {guild.name} (ID: {guild.id})", flush=True)
+        print(f"[CRAWLER] Guild categories: {len(guild.categories)}", flush=True)
         for cat in guild.categories:
-            log.info(f"  Category '{cat.name}': {len(cat.channels)} channels")
+            text_channels = [ch for ch in cat.channels if ch.type in (discord.ChannelType.text, discord.ChannelType.news)]
+            print(f"[CRAWLER]   Category '{cat.name}': {len(text_channels)} text channels", flush=True)
 
         existing = _load_existing()
         existing_msg_ids = existing.get("msg_ids", {})
