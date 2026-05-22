@@ -1,4 +1,4 @@
-"""LLM-based hierarchical tag extraction using MiniMax Token Plan API."""
+"""LLM-based hierarchical tag extraction using MiniMax Token Plan API — batch mode."""
 
 import os
 import json
@@ -14,12 +14,10 @@ from .config import MINIMAX_API_KEY, MINIMAX_BASE_URL, MINIMAX_MODEL, RATE_LIMIT
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger(__name__)
 
-
 SYSTEM_PROMPT = """You are a message tagger for a Korean band community Discord archive.
-Given a Discord message, extract hierarchical topic tags that represent the message's subject.
+Given a list of Discord messages, extract hierarchical topic tags for each message.
 Rules:
-- Output ONLY valid JSON: {"tags": ["Tag1", "Tag1/SubTag"]}
-- Tags should be in Korean or English mixed
+- Output ONLY valid JSON: {"results": [{"id": "msg_id", "tags": ["Tag1", "Tag1/SubTag"]}, ...]}
 - Maximum 4 tags per message
 - Hierarchical tags use "/" (e.g., "선곡/수지", "공연/대관")
 - Tag categories: 선곡, 공연, 합주, 팀, 회비, 공지, 추천, 투표, 일정, 장소, 역할, 기타, 노래
@@ -34,30 +32,46 @@ Rules:
 - Questions → include "질문" tag
 - Poll/voting → include "투표" tag
 - Announcements → include "공지" tag
-- Song recommendations → include "선곡" tag"""
+- Song recommendations → include "선곡" tag
+- Keep the order of messages as provided"""
 
 
-def build_tag_messages(content: str, author: str, channel: str) -> list[dict[str, str]]:
-    """Build message list for chat completion."""
-    user_content = f"""Channel: {channel}
-Author: {author}
-Message: {content}
-Extract tags:"""
-    return [
-        {"role": "system", "content": SYSTEM_PROMPT},
-        {"role": "user", "content": user_content},
-    ]
+def build_batch_content(messages: list[dict[str, Any]], channel: str) -> str:
+    """Build user content for batch tagging."""
+    lines = []
+    for i, msg in enumerate(messages):
+        lines.append(f"[{i}] ID: {msg.get('id', 'unknown')}")
+        lines.append(f"    Author: {msg.get('author_name', 'unknown')}")
+        lines.append(f"    Content: {msg.get('content', '')[:300]}")
+        lines.append("")
+
+    return f"Channel: {channel}\n" + "\n".join(lines) + "\nExtract tags for each message above. Respond with valid JSON only."
 
 
-async def extract_tags_for_message(
+def parse_batch_response(raw_text: str) -> dict[str, list[str]]:
+    """Parse batch API response, returns {msg_id: [tags]}."""
+    # Try to find JSON in the response
+    json_match = re.search(r'\{[\s\S]*\}', raw_text)
+    if not json_match:
+        return {}
+
+    try:
+        parsed = json.loads(json_match.group())
+        results = parsed.get("results", [])
+        return {item["id"]: item.get("tags", []) for item in results if item.get("id")}
+    except (json.JSONDecodeError, KeyError) as e:
+        log.warning(f"Batch parse failed: {e}")
+        return {}
+
+
+async def extract_tags_batch(
     client: httpx.AsyncClient,
-    content: str,
-    author: str,
+    messages: list[dict[str, Any]],
     channel: str,
-) -> list[str]:
-    """Extract tags for a single message via MiniMax API."""
-    if not content or not content.strip():
-        return []
+) -> dict[str, list[str]]:
+    """Extract tags for a batch of messages in a single API call."""
+    if not messages:
+        return {}
 
     try:
         response = await client.post(
@@ -68,61 +82,56 @@ async def extract_tags_for_message(
             },
             json={
                 "model": MINIMAX_MODEL,
-                "messages": build_tag_messages(content, author, channel),
+                "messages": [
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": build_batch_content(messages, channel)},
+                ],
                 "temperature": 0.1,
-                "max_tokens": 256,
+                "max_tokens": 2048,
                 "reasoning": False,
             },
-            timeout=30.0,
+            timeout=60.0,
         )
         response.raise_for_status()
         data = response.json()
 
         raw_text = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+        result = parse_batch_response(raw_text)
 
-        # Find JSON object in the response
-        json_match = re.search(r'\{[^{}]*\}', raw_text)
-        if json_match:
-            try:
-                parsed = json.loads(json_match.group())
-                return parsed.get("tags", [])
-            except json.JSONDecodeError:
-                pass
-
-        # Try whole text
-        try:
-            parsed = json.loads(raw_text.strip())
-            return parsed.get("tags", [])
-        except json.JSONDecodeError:
-            pass
-
-        return []
+        log.info(f"  Batch [{len(messages)} msgs] → {len(result)} tagged")
+        return result
 
     except Exception as e:
-        log.warning(f"Tag extraction failed for message: {e}")
-        return []
+        log.warning(f"Batch tag extraction failed: {e}")
+        return {}
 
 
-async def tag_messages(messages: list[dict[str, Any]], channel_name: str) -> dict[str, list[str]]:
-    """Tag all messages sequentially, returns {message_id: [tags]} dict."""
+async def tag_messages(
+    messages: list[dict[str, Any]],
+    channel_name: str,
+    batch_size: int = 50,
+) -> dict[str, list[str]]:
+    """Tag all messages in batches, returns {message_id: [tags]} dict."""
     if not messages:
         return {}
 
     tag_results: dict[str, list[str]] = {}
+    total = len(messages)
+
+    # Filter out empty content messages
+    valid_messages = [m for m in messages if m.get("content", "").strip()]
 
     async with httpx.AsyncClient() as client:
-        for i, msg in enumerate(messages):
-            content = msg.get("content", "")
-            author = msg.get("author_name", "unknown")
-            msg_id = msg.get("id", f"unknown_{i}")
+        for start in range(0, len(valid_messages), batch_size):
+            batch = valid_messages[start:start + batch_size]
+            batch_num = start // batch_size + 1
+            log.info(f"  Processing batch {batch_num} ({len(batch)} msgs)...")
 
-            tags = await extract_tags_for_message(client, content, author, channel_name)
-            tag_results[msg_id] = tags
+            results = await extract_tags_batch(client, batch, channel_name)
+            tag_results.update(results)
 
-            log.info(f"  [{i+1}/{len(messages)}] Tags for {msg_id}: {tags}")
-
-            # Rate limit delay between calls
-            if i < len(messages) - 1:
+            # Rate limit delay between batches
+            if start + batch_size < len(valid_messages):
                 await asyncio.sleep(RATE_LIMIT_DELAY)
 
     return tag_results
