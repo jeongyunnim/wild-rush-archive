@@ -1,5 +1,3 @@
-"""Discord message crawler with LLM-based incremental tagging."""
-
 import asyncio
 import json
 import logging
@@ -64,6 +62,7 @@ async def fetch_channel_threads(client: discord.Client, channel_id: int) -> list
     try:
         ch = client.get_channel(channel_id)
         if not ch:
+            log.warning(f"Channel {channel_id} not found via get_channel")
             return threads
         bot = client._connection
         for thread in ch.threads:
@@ -95,189 +94,193 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
 
     @client.event
     async def on_ready():
-        import sys
-        sys.stdout.write(f"[CRAWLER] on_ready fired, user={client.user}\n")
-        sys.stdout.flush()
+        log.info(f"on_ready fired! Bot user: {client.user}")
+        try:
+            if not GUILD_ID:
+                log.error("DISCORD_GUILD_ID is not set")
+                await client.close()
+                return
 
-        print(f"[CRAWLER] on_ready fired, user={client.user}", flush=True)
-        if not GUILD_ID:
-            print(f"[CRAWLER] ERROR: DISCORD_GUILD_ID not set", flush=True)
-            await client.close()
-            return
-        guild = client.get_guild(int(GUILD_ID))
-        if not guild:
-            log.error(f"Guild {GUILD_ID} not found (bot may not be in the guild)")
-            await client.close()
-            return
-        log.info(f"Guild: {guild.name} (ID: {guild.id})")
-        log.info(f"Guild categories: {len(guild.categories)}")
-        for cat in guild.categories:
-            text_count = sum(1 for ch in cat.channels if ch.type in (discord.ChannelType.text, discord.ChannelType.news))
-            log.info(f"  Category '{cat.name}': {text_count} text channels")
+            guild = client.get_guild(int(GUILD_ID))
+            if not guild:
+                log.error(f"Guild {GUILD_ID} not found — bot may not be in the guild. Bot guilds: {[g.id for g in client.guilds]}")
+                await client.close()
+                return
 
-        existing = _load_existing()
-        existing_msg_ids = existing.get("msg_ids", {})
-        existing_tags = existing.get("tags", {})
-        existing_summaries = existing.get("thread_summaries", {})
-        log.info(f"Loaded {len(existing_msg_ids)} existing messages from previous crawl")
+            log.info(f"Guild: {guild.name} (ID: {guild.id})")
+            log.info(f"Guild categories: {len(guild.categories)}")
+            for cat in guild.categories:
+                text_count = sum(1 for ch in cat.channels if ch.type in (discord.ChannelType.text, discord.ChannelType.news))
+                log.info(f"  Category '{cat.name}': {text_count} text channels, {len(cat.channels)} total channels")
+                for ch in cat.channels:
+                    log.info(f"    Channel '{ch.name}' type={ch.type}")
 
-        channel_data: dict[str, Any] = {}
-        new_tag_sources: dict[str, dict] = {}
-        processed_threads: set[int] = set()
+            existing = _load_existing()
+            existing_msg_ids = existing.get("msg_ids", {})
+            existing_tags = existing.get("tags", {})
+            existing_summaries = existing.get("thread_summaries", {})
+            log.info(f"Loaded {len(existing_msg_ids)} existing messages from previous crawl")
 
-        for channel_id, ch_info in existing.get("channels", {}).items():
-            channel_data[channel_id] = ch_info
+            channel_data: dict[str, Any] = {}
+            new_tag_sources: dict[str, dict] = {}
+            processed_threads: set[int] = set()
 
-        for category in guild.categories:
-            for ch in category.channels:
-                if ch.type not in (discord.ChannelType.text, discord.ChannelType.news):
-                    continue
-                if CHANNEL_IDS and str(ch.id) not in CHANNEL_IDS:
-                    continue
+            for channel_id, ch_info in existing.get("channels", {}).items():
+                channel_data[channel_id] = ch_info
 
-                log.info(f"Channel '{ch.name}': {len(ch.threads)} active threads")
-                log.info(f"Fetching messages from: {ch.name} (ID: {ch.id})")
-
-                fetched_messages = []
-                async for msg in ch.history(limit=MESSAGE_BATCH_SIZE, after=discord.Object(id="0")):
-                    fetched_messages.append(clean_message(msg))
-
-                if fetched_messages:
-                    log.info(f"Total fetched: {len(fetched_messages)} messages from {ch.name}")
-                else:
-                    log.info(f"No messages in {ch.name}")
-
-                existing_msgs = existing_msg_ids.get(str(ch.id), [])
-                new_msgs = [m for m in fetched_messages if m["id"] not in existing_msgs]
-
-                if new_msgs:
-                    log.info(f"  -> {len(new_msgs)} NEW messages in '{ch.name}'")
-                    log.info(f"Extracting tags for {len(new_msgs)} NEW messages...")
-                    new_tags = await tag_messages(new_msgs, ch.name)
-                    new_tag_sources[str(ch.id)] = {"channel": new_tags}
-                else:
-                    log.info(f"  -> No new messages in '{ch.name}'")
-                    new_tag_sources[str(ch.id)] = existing_tags.get(str(ch.id), {"channel": {}})
-
-                if str(ch.id) not in channel_data:
-                    channel_data[str(ch.id)] = {
-                        "id": str(ch.id),
-                        "name": ch.name,
-                        "category": ch.category.name if ch.category else "etc",
-                        "messages": [],
-                        "threads": [],
-                    }
-                channel_data[str(ch.id)]["messages"] = fetched_messages
-
-                all_threads = await fetch_channel_threads(client, ch.id)
-                log.info(f"  -> Found {len(all_threads)} total threads (active={len(ch.threads)}, archived={max(0, len(all_threads)-len(ch.threads))})")
-
-                for thread in all_threads:
-                    if thread.id in processed_threads:
+            for category in guild.categories:
+                for ch in category.channels:
+                    if ch.type not in (discord.ChannelType.text, discord.ChannelType.news):
                         continue
-                    processed_threads.add(thread.id)
-                    tid = str(thread.id)
+                    if CHANNEL_IDS and str(ch.id) not in CHANNEL_IDS:
+                        continue
 
-                    existing_thread = next(
-                        (t for t in channel_data[str(ch.id)]["threads"] if t["id"] == tid),
-                        None,
-                    )
-                    prev_msgs = existing_thread["messages"] if existing_thread else []
-                    since_id = int(prev_msgs[-1]["id"]) if prev_msgs else None
+                    log.info(f"Channel '{ch.name}': {len(ch.threads)} active threads")
+                    log.info(f"Fetching messages from: {ch.name} (ID: {ch.id})")
 
-                    thread_messages = await fetch_messages_from_thread(thread, since_id=since_id)
-                    log.info(f"  -> Thread '{thread.name}': {len(thread_messages)} messages")
+                    fetched_messages = []
+                    async for msg in ch.history(limit=MESSAGE_BATCH_SIZE, after=discord.Object(id="0")):
+                        fetched_messages.append(clean_message(msg))
 
-                    thread_info = {
-                        "id": tid,
-                        "name": thread.name,
-                        "owner_id": str(thread.owner_id) if thread.owner_id else None,
-                        "message_count": getattr(thread, "message_count", len(thread_messages)) or len(thread_messages),
-                        "created_at": thread.created_at.isoformat(),
-                        "archived": getattr(thread, "archived", False),
-                        "messages": thread_messages,
-                    }
-
-                    if existing_thread:
-                        for i, t in enumerate(channel_data[str(ch.id)]["threads"]):
-                            if t["id"] == tid:
-                                channel_data[str(ch.id)]["threads"][i] = thread_info
-                                break
+                    if fetched_messages:
+                        log.info(f"Total fetched: {len(fetched_messages)} messages from {ch.name}")
                     else:
-                        channel_data[str(ch.id)]["threads"].append(thread_info)
+                        log.info(f"No messages in {ch.name}")
 
-                    new_tag_sources.setdefault(tid, {"thread": {}})
-                    await asyncio.sleep(RATE_LIMIT_DELAY)
+                    existing_msgs = existing_msg_ids.get(str(ch.id), [])
+                    new_msgs = [m for m in fetched_messages if m["id"] not in existing_msgs]
 
-        await client.close()
+                    if new_msgs:
+                        log.info(f"  -> {len(new_msgs)} NEW messages in '{ch.name}'")
+                        new_tags = await tag_messages(new_msgs, ch.name)
+                        new_tag_sources[str(ch.id)] = {"channel": new_tags}
+                    else:
+                        log.info(f"  -> No new messages in '{ch.name}'")
+                        new_tag_sources[str(ch.id)] = existing_tags.get(str(ch.id), {"channel": {}})
 
-        categories: dict[str, list] = {}
-        for cid, ch_data in channel_data.items():
-            cat_name = ch_data.get("category", "etc")
-            if cat_name not in categories:
-                categories[cat_name] = []
-            categories[cat_name].append(ch_data)
+                    if str(ch.id) not in channel_data:
+                        channel_data[str(ch.id)] = {
+                            "id": str(ch.id),
+                            "name": ch.name,
+                            "category": ch.category.name if ch.category else "etc",
+                            "messages": [],
+                            "threads": [],
+                        }
+                    channel_data[str(ch.id)]["messages"] = fetched_messages
 
-        merged_tags = dict(existing_tags)
-        for key, source_tags in new_tag_sources.items():
-            if key not in merged_tags:
-                merged_tags[key] = {}
-            for source, tags in source_tags.items():
-                if tags:
-                    merged_tags[key].setdefault(source, {}).update(tags)
+                    all_threads = await fetch_channel_threads(client, ch.id)
+                    log.info(f"  -> Found {len(all_threads)} total threads (active={len(ch.threads)}, archived={max(0, len(all_threads)-len(ch.threads))})")
 
-        # Tag ALL messages in threads
-        log.info("Tagging all thread messages...")
-        for cid, ch_data in channel_data.items():
-            for thread in ch_data.get("threads", []):
-                tid = thread["id"]
-                msgs = thread.get("messages", [])
-                if not msgs:
-                    continue
-                existing_thread_tags = merged_tags.get(tid, {}).get("thread", {})
-                untagged = [m for m in msgs if str(m["id"]) not in existing_thread_tags]
-                if untagged:
-                    log.info(f"Tagging {len(untagged)} untagged messages in thread '{thread['name']}'...")
-                    thread_name = f"{ch_data['name']}/{thread['name']}"
-                    new_tags = await tag_messages(untagged, thread_name)
-                    merged_tags.setdefault(tid, {"channel": {}, "thread": {}})
-                    merged_tags[tid].setdefault("thread", {}).update(new_tags)
-                    await asyncio.sleep(RATE_LIMIT_DELAY)
+                    for thread in all_threads:
+                        if thread.id in processed_threads:
+                            continue
+                        processed_threads.add(thread.id)
+                        tid = str(thread.id)
 
-        # Summarize all threads
-        thread_count = len([t for ch in channel_data.values() for t in ch.get("threads", [])])
-        log.info(f"Summarizing {thread_count} threads...")
-        thread_summaries = await summarize_all_threads(channel_data, existing_summaries)
+                        existing_thread = next(
+                            (t for t in channel_data[str(ch.id)]["threads"] if t["id"] == tid),
+                            None,
+                        )
+                        prev_msgs = existing_thread["messages"] if existing_thread else []
+                        since_id = int(prev_msgs[-1]["id"]) if prev_msgs else None
 
-        msg_ids: dict[str, list[str]] = {}
-        for cid, ch_data in channel_data.items():
-            for msg in ch_data.get("messages", []):
-                msg_ids.setdefault(cid, []).append(msg["id"])
-            for thread in ch_data.get("threads", []):
-                for msg in thread.get("messages", []):
+                        thread_messages = await fetch_messages_from_thread(thread, since_id=since_id)
+                        log.info(f"  -> Thread '{thread.name}': {len(thread_messages)} messages")
+
+                        thread_info = {
+                            "id": tid,
+                            "name": thread.name,
+                            "owner_id": str(thread.owner_id) if thread.owner_id else None,
+                            "message_count": getattr(thread, "message_count", len(thread_messages)) or len(thread_messages),
+                            "created_at": thread.created_at.isoformat(),
+                            "archived": getattr(thread, "archived", False),
+                            "messages": thread_messages,
+                        }
+
+                        if existing_thread:
+                            for i, t in enumerate(channel_data[str(ch.id)]["threads"]):
+                                if t["id"] == tid:
+                                    channel_data[str(ch.id)]["threads"][i] = thread_info
+                                    break
+                        else:
+                            channel_data[str(ch.id)]["threads"].append(thread_info)
+
+                        new_tag_sources.setdefault(tid, {"thread": {}})
+                        await asyncio.sleep(RATE_LIMIT_DELAY)
+
+            await client.close()
+
+            categories: dict[str, list] = {}
+            for cid, ch_data in channel_data.items():
+                cat_name = ch_data.get("category", "etc")
+                if cat_name not in categories:
+                    categories[cat_name] = []
+                categories[cat_name].append(ch_data)
+
+            merged_tags = dict(existing_tags)
+            for key, source_tags in new_tag_sources.items():
+                if key not in merged_tags:
+                    merged_tags[key] = {}
+                for source, tags in source_tags.items():
+                    if tags:
+                        merged_tags[key].setdefault(source, {}).update(tags)
+
+            log.info("Tagging all thread messages...")
+            for cid, ch_data in channel_data.items():
+                for thread in ch_data.get("threads", []):
+                    tid = thread["id"]
+                    msgs = thread.get("messages", [])
+                    if not msgs:
+                        continue
+                    existing_thread_tags = merged_tags.get(tid, {}).get("thread", {})
+                    untagged = [m for m in msgs if str(m["id"]) not in existing_thread_tags]
+                    if untagged:
+                        log.info(f"Tagging {len(untagged)} untagged messages in thread '{thread['name']}'...")
+                        thread_name = f"{ch_data['name']}/{thread['name']}"
+                        new_tags = await tag_messages(untagged, thread_name)
+                        merged_tags.setdefault(tid, {"channel": {}, "thread": {}})
+                        merged_tags[tid].setdefault("thread", {}).update(new_tags)
+                        await asyncio.sleep(RATE_LIMIT_DELAY)
+
+            thread_count = len([t for ch in channel_data.values() for t in ch.get("threads", [])])
+            log.info(f"Summarizing {thread_count} threads...")
+            thread_summaries = await summarize_all_threads(channel_data, existing_summaries)
+
+            msg_ids: dict[str, list[str]] = {}
+            for cid, ch_data in channel_data.items():
+                for msg in ch_data.get("messages", []):
                     msg_ids.setdefault(cid, []).append(msg["id"])
+                for thread in ch_data.get("threads", []):
+                    for msg in thread.get("messages", []):
+                        msg_ids.setdefault(cid, []).append(msg["id"])
 
-        result = {
-            "guild": {
-                "id": str(guild.id),
-                "name": guild.name,
-                "description": guild.description or "",
-                "icon_url": guild.icon.url if guild.icon else None,
-            },
-            "categories": categories,
-            "channels": channel_data,
-            "msg_ids": msg_ids,
-            "tags": merged_tags,
-            "thread_summaries": thread_summaries,
-            "crawled_at": datetime.utcnow().isoformat() + "Z",
-        }
+            result = {
+                "guild": {
+                    "id": str(guild.id),
+                    "name": guild.name,
+                    "description": guild.description or "",
+                    "icon_url": guild.icon.url if guild.icon else None,
+                },
+                "categories": categories,
+                "channels": channel_data,
+                "msg_ids": msg_ids,
+                "tags": merged_tags,
+                "thread_summaries": thread_summaries,
+                "crawled_at": datetime.utcnow().isoformat() + "Z",
+            }
 
-        os.makedirs(OUTPUT_DIR, exist_ok=True)
-        out_path = os.path.join(OUTPUT_DIR, "guild_data.json")
-        with open(out_path, "w", encoding="utf-8") as f:
-            json.dump(result, f, ensure_ascii=False, indent=2)
-        log.info(f"Saved to {out_path}")
-        return result
+            os.makedirs(OUTPUT_DIR, exist_ok=True)
+            out_path = os.path.join(OUTPUT_DIR, "guild_data.json")
+            with open(out_path, "w", encoding="utf-8") as f:
+                json.dump(result, f, ensure_ascii=False, indent=2)
+            log.info(f"Saved to {out_path}")
+
+        except Exception as e:
+            log.exception(f"FATAL in on_ready: {e}")
+            await client.close()
+            raise
+
+    return result
 
 
 def run_crawler():
