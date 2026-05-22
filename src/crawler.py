@@ -66,6 +66,7 @@ async def fetch_channel_threads(client: discord.Client, channel_id: int) -> list
             log.warning(f"Channel {channel_id} not found via get_channel")
             return threads
         bot = client._connection
+        guild = ch.guild
         for thread in ch.threads:
             threads.append(thread)
         route = Route("GET", "/channels/{channel_id}/threads/archived/public", channel_id=channel_id)
@@ -74,7 +75,7 @@ async def fetch_channel_threads(client: discord.Client, channel_id: int) -> list
             for tdata in resp.get("threads", []):
                 if any(t.id == int(tdata["id"]) for t in threads):
                     continue
-                thread = Thread(state=bot, data=tdata)
+                thread = Thread(guild=guild, state=bot, data=tdata)
                 threads.append(thread)
     except Exception as e:
         log.warning(f"Error fetching threads for channel {channel_id}: {e}")
@@ -131,34 +132,14 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
 
             for category in guild.categories:
                 for ch in category.channels:
-                    if ch.type not in (discord.ChannelType.text, discord.ChannelType.news):
+                    if ch.type not in (discord.ChannelType.text, discord.ChannelType.news, discord.ChannelType.forum):
                         continue
                     if CHANNEL_IDS and str(ch.id) not in CHANNEL_IDS:
                         continue
 
-                    log.info(f"Channel '{ch.name}': {len(ch.threads)} active threads")
-                    log.info(f"Fetching messages from: {ch.name} (ID: {ch.id})")
+                    log.info(f"Channel '{ch.name}' (type={ch.type}): {len(ch.threads)} active threads")
 
-                    fetched_messages = []
-                    async for msg in ch.history(limit=MESSAGE_BATCH_SIZE, after=discord.Object(id="0")):
-                        fetched_messages.append(clean_message(msg))
-
-                    if fetched_messages:
-                        log.info(f"Total fetched: {len(fetched_messages)} messages from {ch.name}")
-                    else:
-                        log.info(f"No messages in {ch.name}")
-
-                    existing_msgs = existing_msg_ids.get(str(ch.id), [])
-                    new_msgs = [m for m in fetched_messages if m["id"] not in existing_msgs]
-
-                    if new_msgs:
-                        log.info(f"  -> {len(new_msgs)} NEW messages in '{ch.name}'")
-                        new_tags = await tag_messages(new_msgs, ch.name)
-                        new_tag_sources[str(ch.id)] = {"channel": new_tags}
-                    else:
-                        log.info(f"  -> No new messages in '{ch.name}'")
-                        new_tag_sources[str(ch.id)] = existing_tags.get(str(ch.id), {"channel": {}})
-
+                    # Initialize channel data
                     if str(ch.id) not in channel_data:
                         channel_data[str(ch.id)] = {
                             "id": str(ch.id),
@@ -167,7 +148,34 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
                             "messages": [],
                             "threads": [],
                         }
-                    channel_data[str(ch.id)]["messages"] = fetched_messages
+
+                    # Forum channels don't have regular messages, only threads
+                    if ch.type == discord.ChannelType.forum:
+                        log.info(f"  Forum channel - skipping message fetch")
+                        new_tag_sources[str(ch.id)] = existing_tags.get(str(ch.id), {"channel": {}})
+                    else:
+                        log.info(f"Fetching messages from: {ch.name} (ID: {ch.id})")
+                        fetched_messages = []
+                        async for msg in ch.history(limit=MESSAGE_BATCH_SIZE, after=discord.Object(id="0")):
+                            fetched_messages.append(clean_message(msg))
+
+                        if fetched_messages:
+                            log.info(f"Total fetched: {len(fetched_messages)} messages from {ch.name}")
+                        else:
+                            log.info(f"No messages in {ch.name}")
+
+                        existing_msgs = existing_msg_ids.get(str(ch.id), [])
+                        new_msgs = [m for m in fetched_messages if m["id"] not in existing_msgs]
+
+                        if new_msgs:
+                            log.info(f"  -> {len(new_msgs)} NEW messages in '{ch.name}'")
+                            new_tags = await tag_messages(new_msgs, ch.name)
+                            new_tag_sources[str(ch.id)] = {"channel": new_tags}
+                        else:
+                            log.info(f"  -> No new messages in '{ch.name}'")
+                            new_tag_sources[str(ch.id)] = existing_tags.get(str(ch.id), {"channel": {}})
+
+                        channel_data[str(ch.id)]["messages"] = fetched_messages
 
                     all_threads = await fetch_channel_threads(client, ch.id)
                     log.info(f"  -> Found {len(all_threads)} total threads (active={len(ch.threads)}, archived={max(0, len(all_threads)-len(ch.threads))})")
