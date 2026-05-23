@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧵 2026/05/02 리뷰 — 와일드러시 Archive</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+    .sidebar-scroll { scrollbar-width: thin; }
+    .line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+  </style>
+</head>
+<body class="bg-[#0a0a0f] text-[#e0e0e6]">
+
+  <!-- Mobile Top Bar -->
+  <div class="lg:hidden flex items-center justify-between px-4 py-3 border-b border-[#1f1f1f] bg-[#0d0d14]">
+    <button id="sidebar-toggle" class="p-2 rounded-lg hover:bg-[#1a1a24] transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </button>
+    <span class="text-sm font-medium text-white">🧵 2026/05/02 리뷰</span>
+    <div class="w-8"></div>
+  </div>
+
+  <!-- Mobile Sidebar Overlay -->
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden"></div>
+
+  <div class="flex h-screen overflow-hidden">
+
+    <!-- Sidebar (hidden on mobile by default) -->
+    <aside id="sidebar" class="w-64 flex-shrink-0 flex flex-col bg-[#0d0d14] border-r border-[#1f1f1f] overflow-hidden fixed inset-y-0 left-0 z-50 transform -translate-x-full lg:relative lg:translate-x-0 transition-transform duration-200">
+
+      <!-- Server Header -->
+      <div class="px-4 py-4 border-b border-[#1f1f1f]">
+        <div class="flex items-center gap-2.5">
+          
+          <img src="https://cdn.discordapp.com/icons/1489894102827794452/0593a61e9794209cfe7ae37253419bc7.png?size=1024" alt="와일드러시" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+          
+          <div class="min-w-0">
+            <p class="text-sm font-semibold text-white truncate">와일드러시</p>
+            <p class="text-[10px] text-[#52525b]">Discord Archive</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Channel List (scrollable) -->
+      <nav class="flex-1 overflow-y-auto sidebar-scroll py-2">
+        
+        <div class="mb-1">
+          <div class="px-4 py-1.5 flex items-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#3f3f46] flex-shrink-0"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+            <span class="text-[10px] font-semibold text-[#52525b] uppercase tracking-widest">없음</span>
+          </div>
+
+          
+          <a href="/wild-rush-archive/channels/1489895992047308902/index.html"
+             class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">공지방</span>
+            <span class="ml-auto text-[10px] text-[#3f3f46]">104</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1489896035802153051/index.html"
+             class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">선곡-수지</span>
+            <span class="ml-auto text-[10px] text-[#3f3f46]">131</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1489896325741805608/index.html"
+             class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">선곡-인호</span>
+            <span class="ml-auto text-[10px] text-[#3f3f46]">113</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1489896356062564352/index.html"
+             class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">선곡-성현</span>
+            <span class="ml-auto text-[10px] text-[#3f3f46]">70</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1489939250999853197/index.html"
+             class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">공지-소통가능방</span>
+            <span class="ml-auto text-[10px] text-[#3f3f46]">79</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1489965483817046147/index.html"
+             class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">일반</span>
+            <span class="ml-auto text-[10px] text-[#3f3f46]">172</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1489977686343417988/index.html"
+             class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">합주영상-사진</span>
+            <span class="ml-auto text-[10px] text-[#3f3f46]">8</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1490699203402535082/index.html"
+             class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">🎧노래-추천🎧</span>
+            <span class="ml-auto text-[10px] text-[#3f3f46]">13</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1491433466947047454/index.html"
+             class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">🎸기타-방</span>
+            <span class="ml-auto text-[10px] text-[#3f3f46]">83</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1501077542592057374/index.html"
+             class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">💸회비-관리</span>
+            <span class="ml-auto text-[10px] text-[#3f3f46]">18</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1501080971733237770/index.html"
+             class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer bg-[#1a1a24]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d4d4d8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-white group-hover:text-[#d4d4d8] truncate transition-colors">🖐️합주-리뷰</span>
+            <span class="ml-auto text-[10px] text-[#3f3f46]">18</span>
+          </a>
+          
+        </div>
+        
+      </nav>
+
+      <!-- Footer -->
+      <div class="px-4 py-3 border-t border-[#1f1f1f]">
+        <p class="text-[10px] text-[#3f3f46]">마지막 동기화<br>2026-05-23T09:07:28.670824 UTC</p>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto flex flex-col">
+      <div class="flex-1 max-w-4xl mx-auto px-4 lg:px-8 py-6 lg:py-8">
+
+        <!-- Breadcrumb -->
+        <nav class="flex items-center gap-2 text-sm text-[#52525b] mb-6">
+          <a href="/wild-rush-archive/index.html" class="hover:text-[#a1a1aa] transition-colors">와일드러시</a>
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <a href="/wild-rush-archive/channels/1501080971733237770/index.html" class="hover:text-[#a1a1aa] transition-colors"># 🖐️합주-리뷰</a>
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <span class="text-[#d4d4d8]">🧵 2026/05/02 리뷰</span>
+        </nav>
+
+        <!-- Thread Header -->
+        <div class="mb-8 pb-6 border-b border-[#1f1f1f]">
+          <h1 class="text-xl font-semibold text-white tracking-tight mb-2">🧵 2026/05/02 리뷰</h1>
+          <div class="flex items-center gap-3 text-xs text-[#3f3f46]">
+            <span>생성: 2026-05-06 09:48</span>
+            <span>·</span>
+            <span>2개 메시지</span>
+          </div>
+        </div>
+
+        <!-- Thread Summary -->
+        
+        
+        <div class="mb-8 p-5 bg-[#111118] border border-[#1f1f1f] rounded-xl">
+          
+          
+          <div class="space-y-3">
+            <div class="flex items-center gap-1.5 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#52525b]"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              <span class="text-[10px] font-semibold text-[#52525b] uppercase tracking-widest">논의 요약</span>
+            </div>
+            
+            <div class="border-l-2 border-[#2a2a2a] pl-3">
+              <p class="text-xs font-medium text-[#71717a] mb-1">get your gun 리뷰</p>
+              <ul class="space-y-1">
+                
+                <li class="text-xs text-[#52525b] flex items-start gap-1.5">
+                  <span class="text-[#3f3f46] mt-0.5">·</span>
+                  <span>보컬: 랩 박자를 조금 더 빠르게 해서 세션에 맞춰줄 것, 본인 느낌대로 하려면 아예 그렇게 정하기, 랩 안 들으면 드럼 치겠음</span>
+                </li>
+                
+                <li class="text-xs text-[#52525b] flex items-start gap-1.5">
+                  <span class="text-[#3f3f46] mt-0.5">·</span>
+                  <span>세션: 합주는 괜찮았으나 각자 디벨롭할 부분이 있으므로 개인 연습 후 다음 합주에서 쉬어도 될지 검토</span>
+                </li>
+                
+              </ul>
+              
+              <p class="text-[10px] text-[#3f3f46] mt-1.5">발언: naykim</p>
+              
+            </div>
+            
+            <div class="border-l-2 border-[#2a2a2a] pl-3">
+              <p class="text-xs font-medium text-[#71717a] mb-1">몽유병 리뷰</p>
+              <ul class="space-y-1">
+                
+                <li class="text-xs text-[#52525b] flex items-start gap-1.5">
+                  <span class="text-[#3f3f46] mt-0.5">·</span>
+                  <span>보컬: 브릿지 들어가는 박자 주의, 뒷부분 키 올라가는 부분 음 주의</span>
+                </li>
+                
+                <li class="text-xs text-[#52525b] flex items-start gap-1.5">
+                  <span class="text-[#3f3f46] mt-0.5">·</span>
+                  <span>세션: 인트로를 더 웅장하게 해야 함, 세션 각자 연습 필요</span>
+                </li>
+                
+                <li class="text-xs text-[#52525b] flex items-start gap-1.5">
+                  <span class="text-[#3f3f46] mt-0.5">·</span>
+                  <span>세션: 브릿지 기타 솔로 4마디를 빼거나 더 화려하게 넣기 검토</span>
+                </li>
+                
+                <li class="text-xs text-[#52525b] flex items-start gap-1.5">
+                  <span class="text-[#3f3f46] mt-0.5">·</span>
+                  <span>세션: 전체적으로 소리가 비는 부분이 없는지 확인 필요 (인이어 양쪽 다 껴서 잘 못 들었음)</span>
+                </li>
+                
+              </ul>
+              
+              <p class="text-[10px] text-[#3f3f46] mt-1.5">발언: naykim</p>
+              
+            </div>
+            
+            <div class="border-l-2 border-[#2a2a2a] pl-3">
+              <p class="text-xs font-medium text-[#71717a] mb-1">입춘 리뷰</p>
+              <ul class="space-y-1">
+                
+                <li class="text-xs text-[#52525b] flex items-start gap-1.5">
+                  <span class="text-[#3f3f46] mt-0.5">·</span>
+                  <span>저번에 비해 아주 좋아진 것 같음</span>
+                </li>
+                
+                <li class="text-xs text-[#52525b] flex items-start gap-1.5">
+                  <span class="text-[#3f3f46] mt-0.5">·</span>
+                  <span>보컬: 세 박 쉬고 &#39;아-&#39; 할 때 조금 더 힘있게 하면 좋을 듯 (원곡 느낌이나 본인 스타일에 맡길 수도 있음)</span>
+                </li>
+                
+              </ul>
+              
+              <p class="text-[10px] text-[#3f3f46] mt-1.5">발언: naykim</p>
+              
+            </div>
+            
+          </div>
+          
+          
+        </div>
+        
+
+        <!-- Messages -->
+        <div>
+          
+          <div class="flex gap-3 py-5">
+            
+            <img src="https://cdn.discordapp.com/avatars/1184354841619873863/e8b45f0b759283d96ee7ca0a6c995305.png?size=1024" alt="naykim" class="w-10 h-10 rounded-full object-cover flex-shrink-0 mt-0.5">
+            
+
+            <div class="flex-1 min-w-0">
+              <div class="flex items-baseline gap-3 mb-1.5">
+                <span class="text-sm font-semibold text-[#e4e4e7]">naykim</span>
+                <span class="text-xs text-[#3f3f46]">2026-05-06 09:51</span>
+              </div>
+
+              
+              <p class="text-sm text-[#a1a1aa] leading-relaxed whitespace-pre-wrap">🎸 합주 리뷰 - 2026/05/02
+
+1. get your gun
+보컬 - 랩 박자 조금 더 빠르게 해서 세션에 맞춰주세욤. 본인 느낌대로 하고싶다면 아예 그렇게 정하기. 랩 아예 안 듣고 드럼 치겠음
+세션 - 합주는 괜찮았는데 세션 각자가 디벨롭할 부분들이 있을 거 같음. 개인 연습 각자 하고 다음 합주에는 쉬어도 되지 않을까?
+
+2. 몽유병
+보컬 - 브릿지 들어가는 박자 주의, 뒷부분에 키 올라가는 부분 음 주의 
+세션 - 1. 인트로 조금 더 웅장해야 할 거 같음. 세션 각자 연습 더? 
+2. 중간에 브릿지에서 기타 솔로 조용하게(?) 나오는 4마디를 빼면 어떨지? 아님 솔로를 더 화려하게 넣든지
+3. 사실 인이어 양쪽 다 껴서 전체적으로 잘 못 들었는데, 소리가 너무 비는 부분이 있지 않은지 확인하면 좋을듯
+
+3. 입춘
+저번에 비해 아주 좋아진 거 같음. 
+보컬 - 세 박 쉬고 아- 할 때 조금 더 힘있게 하면 좋을 듯(원곡 느낌이 그런데, 본인 스타일에 맡길게여). 이 부분 키 올라가죠? 음 잘 맞추기
+세션 - 워낙 느린 노래라 중간중간 늘어지는 느낌만 없도록 하면 좋을듯
+
+4. love is dangerous
+점점 좋아지는 것이 눈에 보이나 공연에 올라갈 만큼 맞추려면 아직 갈 길이 먼 느낌이다. 다른 곡들도 추가될텐데 걱정이 되어 여기서 홀드하자고 주장하긴 했는데, 사실 내가 하는 곡도 아닌데 주제넘은 것 같아서 미안해졌슴다. 하지만 남들에게 보여주기 부족한 상태로 무대하는 것도 절대로 반대임다. 꼭 하고싶은 분이 있다면, 기량 끌어올리자고 모두와 합의되면, 가져가는 것도 좋을 거 같아욤(노래는 넘 좋으니ㅠㅠ)
+
+5. black eyes
+곡 전체적으로 합은 괜찮은거 같고, 디테일 잡을 단계 같습니다.
+보컬 - 보컬 쉬는 시간에 뭐하고 있을지 고민하기?
+세션 - 1. 드럼 빠지는 부분 박자를 어떻게 맞출지 상의가 필요할듯. 공연때도 계속 카운트 줄 수는 없으니
+2. 2절?에서 좀 전체적으로 심심한 거 같아요? 드럼 필인을 좀 추가해볼게요
+3. 키보드가 조금 더 나대도 될 거 같은데 원곡에서 원래 비중이 많이 없나요? 하나씩 쌓으면서 들어가는 부분에서만 들리는거 같아서
+개인적으로 디테일 잡고 다음 합주엔 쉬어도 되지 않을까?
+
+6. far away
+보컬 - 원곡이 원래 그렇긴 한데, 더 임팩트(힘?)가 있게 부르면 좋겠다. 세션만 재밌는 느낌.. 보컬도 돋보일 방법이 없을까
+세션 - 1. 브릿지라고 해야하나, 기타 화려하게 하고 스네어 막 치면서 고조되는 섹션에서 박자 잘 맞추기! 사실 드럼이 문제였긴 함. 연습 더 하겠음
+2. 베이스 사운드 더 올려도 될듯! 베이스가 멋진 곡이잔슴
+3. 세션만 나오다가 보컬 다시 들어오는 부분들에서 빵!하는 느낌 살리기
+
+--------------------------------------
+🖐️ 총평
+이번 합주 굿굿. 모든 곡들이 좋아진 게 느껴졌음
+전체적으로 드럼 빠지는 부분에서 박자 어떻게 맞출지 상의하자! 합주때는 계속 카운트 줘도 되는데, 공연에서 어떤 식으로 할지 고민해둬야 함
+---------------------------------------
+🕊️ 추가 내용
+기억할 점! 입춘 뮤트(?)였다가 아- 하고 터질 때 세 박 쉬고 네 박째에 들어감!
+일단은 love is dangerous 취소됨!(혹시 번복되면 노티 부탁드림)</p>
+              
+
+              
+
+              
+
+              
+              
+              
+              
+              <div class="flex flex-wrap gap-1.5 mt-3">
+                
+                <a href="/wild-rush-archive/tags/%ED%95%A9%EC%A3%BC/%EC%98%81%EC%83%81/index.html"
+                   class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#111118] border border-[#1f1f1f] text-xs text-[#71717a] hover:text-[#a1a1aa] hover:border-[#3f3f46] transition-colors">
+                  # 합주/영상
+                </a>
+                
+                <a href="/wild-rush-archive/tags/%EC%84%A0%EA%B3%A1/%EC%88%98%EC%A7%80/index.html"
+                   class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#111118] border border-[#1f1f1f] text-xs text-[#71717a] hover:text-[#a1a1aa] hover:border-[#3f3f46] transition-colors">
+                  # 선곡/수지
+                </a>
+                
+                <a href="/wild-rush-archive/tags/%EC%84%A0%EA%B3%A1/%EC%9D%B8%ED%98%B8/index.html"
+                   class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#111118] border border-[#1f1f1f] text-xs text-[#71717a] hover:text-[#a1a1aa] hover:border-[#3f3f46] transition-colors">
+                  # 선곡/인호
+                </a>
+                
+              </div>
+              
+            </div>
+          </div>
+          
+          <div class="flex gap-3 py-5 border-t border-[#1f1f1f]">
+            
+            <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-10 h-10 rounded-full object-cover flex-shrink-0 mt-0.5">
+            
+
+            <div class="flex-1 min-w-0">
+              <div class="flex items-baseline gap-3 mb-1.5">
+                <span class="text-sm font-semibold text-[#e4e4e7]">령</span>
+                <span class="text-xs text-[#3f3f46]">2026-05-06 09:48</span>
+              </div>
+
+              
+              <p class="text-sm text-[#a1a1aa] leading-relaxed whitespace-pre-wrap">리뷰를 남겨주세요</p>
+              
+
+              
+
+              
+
+              
+              
+              
+              
+            </div>
+          </div>
+          
+        </div>
+
+        <div class="text-center text-xs text-[#3f3f46] py-8 border-t border-[#1f1f1f] mt-4">
+          2개 메시지 &nbsp;·&nbsp; 마지막 동기화: 2026-05-23T09:07:28.670824 UTC
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var toggle = document.getElementById('sidebar-toggle');
+      var sidebar = document.getElementById('sidebar');
+      var overlay = document.getElementById('sidebar-overlay');
+      if (toggle && sidebar && overlay) {
+        toggle.addEventListener('click', function() {
+          sidebar.classList.toggle('-translate-x-full');
+          sidebar.classList.toggle('translate-x-0');
+          overlay.classList.toggle('hidden');
+        });
+        overlay.addEventListener('click', function() {
+          sidebar.classList.add('-translate-x-full');
+          sidebar.classList.remove('translate-x-0');
+          overlay.classList.add('hidden');
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>
