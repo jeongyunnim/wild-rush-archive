@@ -26,13 +26,13 @@ def clean_message(msg: discord.Message) -> dict[str, Any]:
         "author_name": str(msg.author.display_name),
         "author_avatar": (
             str(msg.author.display_avatar.url)
-            if msg.author.display_avatar and not msg.author.display_avatar.is_static()
+            if msg.author.display_avatar
             else None
         ),
         "content": msg.content,
         "timestamp": msg.created_at.isoformat(),
         "attachments": [
-            {"url": a.url, "filename": a.filename, "is_image": a.is_image}
+            {"url": a.url, "filename": a.filename, "content_type": a.content_type}
             for a in msg.attachments
         ],
         "reactions": [
@@ -217,8 +217,7 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
                         new_tag_sources.setdefault(tid, {"thread": {}})
                         await asyncio.sleep(RATE_LIMIT_DELAY)
 
-            await client.close()
-
+            # Build categories dict (client still connected for any remaining API calls)
             categories: dict[str, list] = {}
             for cid, ch_data in channel_data.items():
                 cat_name = ch_data.get("category", "etc")
@@ -289,6 +288,11 @@ async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
             with open(out_path, "w", encoding="utf-8") as f:
                 json.dump(result, f, ensure_ascii=False, indent=2)
             log.info(f"Saved to {out_path}")
+
+            # Close client after save (may hang, but data is already saved)
+            log.info("Closing Discord client...")
+            await client.close()
+            log.info("Done!")
 
         except Exception as e:
             log.exception(f"FATAL in on_ready: {e}")
