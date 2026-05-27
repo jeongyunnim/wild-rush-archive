@@ -98,20 +98,24 @@
         </div>
 
         <div class="space-y-3">
-          {% for ch_id, msg_id, src_type in occurrences %}
-          {% set msg_list = channels[ch_id].get('threads', []) if src_type == 'thread' else channels[ch_id].get('messages', []) %}
-          {% set msg = msg_list | selectattr('id', 'equalto', msg_id) | first %}
-          {% set parent_channel = channels[ch_id] if src_type == 'thread' else None %}
+          {% for ch_id, thread_id, msg_id, src_type in occurrences %}
+          {% if src_type == 'thread' %}
+            {% set thread_obj = channels.get(ch_id, {}).get('threads', []) | selectattr('id', 'equalto', thread_id) | first %}
+            {% set msg = (thread_obj.messages if thread_obj else []) | selectattr('id', 'equalto', msg_id) | first %}
+          {% else %}
+            {% set thread_obj = None %}
+            {% set msg = channels.get(ch_id, {}).get('messages', []) | selectattr('id', 'equalto', msg_id) | first %}
+          {% endif %}
           {% if msg %}
           <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
                 {% if src_type == 'channel' %}
-                <a href="{{ base_path }}/channels/{{ ch_id }}/index.html" class="hover:text-[#71717a] transition-colors"># {{ channels[ch_id].name }}</a>
+                <a href="{{ base_path }}/channels/{{ ch_id }}/index.html" class="hover:text-[#71717a] transition-colors"># {{ channels.get(ch_id, {}).name }}</a>
                 {% else %}
-                <a href="{{ base_path }}/channels/{{ ch_id }}/index.html" class="hover:text-[#71717a] transition-colors"># {{ parent_channel.name }}</a>
+                <a href="{{ base_path }}/channels/{{ ch_id }}/index.html" class="hover:text-[#71717a] transition-colors"># {{ channels.get(ch_id, {}).name }}</a>
                 <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                <a href="{{ base_path }}/threads/{{ msg_id }}/index.html" class="hover:text-[#71717a] transition-colors">🧵 {{ parent_channel.threads | selectattr('id', 'equalto', msg_id) | map(attribute='name') | first }}</a>
+                <a href="{{ base_path }}/threads/{{ thread_id }}/index.html" class="hover:text-[#71717a] transition-colors">🧵 {{ thread_obj.name if thread_obj else thread_id }}</a>
                 {% endif %}
               </div>
               <div class="flex gap-3">
@@ -127,11 +131,11 @@
                   </div>
                   {% if msg.content %}
                   {% if msg.content|length > 200 %}
-                  <p class="text-sm text-[#71717a] mt-1">{{ msg.content[:200] }}</p>
+                  <p class="text-sm text-[#71717a] mt-1">{{ msg.content[:200]|linkify }}</p>
                   <button class="text-xs text-[#52525b] hover:text-[#a1a1aa] mt-1 transition-colors" onclick="this.nextElementSibling.classList.remove('hidden'); this.classList.add('hidden')">...더보기</button>
-                  <p class="text-sm text-[#71717a] mt-1 hidden">{{ msg.content }}</p>
+                  <p class="text-sm text-[#71717a] mt-1 hidden">{{ msg.content|linkify }}</p>
                   {% else %}
-                  <p class="text-sm text-[#71717a] mt-1">{{ msg.content }}</p>
+                  <p class="text-sm text-[#71717a] mt-1">{{ msg.content|linkify }}</p>
                   {% endif %}
                   {% endif %}
                 </div>

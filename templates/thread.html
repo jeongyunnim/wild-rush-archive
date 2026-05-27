@@ -188,7 +188,7 @@
               </div>
 
               {% if msg.content %}
-              <p class="text-sm text-[#a1a1aa] leading-relaxed whitespace-pre-wrap">{{ msg.content }}</p>
+              <p class="text-sm text-[#a1a1aa] leading-relaxed whitespace-pre-wrap">{{ msg.content|linkify }}</p>
               {% endif %}
 
               {% if msg.attachments %}

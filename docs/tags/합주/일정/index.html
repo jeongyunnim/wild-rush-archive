@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>#합주/일정 — 와일드러시 Archive</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } }
+    }
+  </script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+    .sidebar-scroll { scrollbar-width: thin; }
+  </style>
+</head>
+<body class="bg-[#0a0a0f] text-[#e0e0e6]">
+
+  <!-- Mobile Top Bar -->
+  <div class="lg:hidden flex items-center justify-between px-4 py-3 border-b border-[#1f1f1f] bg-[#0d0d14]">
+    <button id="sidebar-toggle" class="p-2 rounded-lg hover:bg-[#1a1a24] transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </button>
+    <span class="text-sm font-medium text-white"># 합주/일정</span>
+    <div class="w-8"></div>
+  </div>
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden"></div>
+
+  <div class="flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-64 flex-shrink-0 flex flex-col bg-[#0d0d14] border-r border-[#1f1f1f] overflow-hidden fixed inset-y-0 left-0 z-50 transform -translate-x-full lg:relative lg:translate-x-0 transition-transform duration-200">
+      <div class="px-4 py-4 border-b border-[#1f1f1f]">
+        <div class="flex items-center gap-2.5">
+          
+          <img src="https://cdn.discordapp.com/icons/1489894102827794452/0593a61e9794209cfe7ae37253419bc7.png?size=1024" alt="와일드러시" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+          
+          <div class="min-w-0">
+            <p class="text-sm font-semibold text-white truncate">와일드러시</p>
+            <p class="text-[10px] text-[#52525b]">Discord Archive</p>
+          </div>
+        </div>
+      </div>
+      <nav class="flex-1 overflow-y-auto sidebar-scroll py-2">
+        
+        <div class="mb-1">
+          <div class="px-4 py-1.5 flex items-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#3f3f46] flex-shrink-0"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+            <span class="text-[10px] font-semibold text-[#52525b] uppercase tracking-widest">없음</span>
+          </div>
+          
+          <a href="/wild-rush-archive/channels/1489895992047308902/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">공지방</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1489896035802153051/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">선곡-수지</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1489896325741805608/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">선곡-인호</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1489896356062564352/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">선곡-성현</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1489939250999853197/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">공지-소통가능방</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1489965483817046147/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">일반</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1489977686343417988/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">합주영상-사진</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1490699203402535082/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">🎧노래-추천🎧</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1491433466947047454/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">🎸기타-방</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1501077542592057374/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">💸회비-관리</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1501080971733237770/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">🖐️합주-리뷰</span>
+          </a>
+          
+        </div>
+        
+        <div class="mb-1">
+          <div class="px-4 py-1.5 flex items-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#3f3f46] flex-shrink-0"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+            <span class="text-[10px] font-semibold text-[#52525b] uppercase tracking-widest">🎵선곡하시오</span>
+          </div>
+          
+          <a href="/wild-rush-archive/channels/1507983211345481729/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">선곡-앵콜곡</span>
+          </a>
+          
+        </div>
+        
+        <div class="mt-4 border-t border-[#1f1f1f] pt-2">
+          <a href="/wild-rush-archive/tags/index.html" class="flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg bg-[#1a1a24] cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d4d4d8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+            <span class="text-xs text-white">태그</span>
+          </a>
+        </div>
+      </nav>
+      <div class="px-4 py-3 border-t border-[#1f1f1f]">
+        <p class="text-[10px] text-[#3f3f46]">마지막 동기화<br>2026-05-27T05:32:32.260343 UTC</p>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto flex flex-col">
+      <div class="flex-1 max-w-5xl mx-auto px-4 lg:px-8 py-6 lg:py-8">
+
+        <nav class="flex items-center gap-2 text-sm text-[#52525b] mb-6">
+          <a href="/wild-rush-archive/index.html" class="hover:text-[#a1a1aa] transition-colors">와일드러시</a>
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <a href="/wild-rush-archive/tags/index.html" class="hover:text-[#a1a1aa] transition-colors">태그</a>
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <span class="text-[#d4d4d8]"># 합주/일정</span>
+        </nav>
+
+        <div class="mb-8 pb-6 border-b border-[#1f1f1f]">
+          <div class="flex items-center gap-2 mb-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#52525b]"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+            <h1 class="text-xl font-semibold text-white tracking-tight"># 합주/일정</h1>
+          </div>
+          <p class="text-sm text-[#52525b]">29개 메시지</p>
+        </div>
+
+        <div class="space-y-3">
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489895992047308902/index.html" class="hover:text-[#71717a] transition-colors"># 공지방</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">령</span>
+                    <span class="text-xs text-[#3f3f46]">2026-05-26T07:01:15.923000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">@everyone ,
+5/30 (토) 합주 **홍대 잼 합주실**에서 진행되는거 잊지 말아주세요!!
+사당 아닙니다! 홍대 잼 합주실 입니다!
+
+위치 : <a href="https://naver.me/5A3NVd1i" target="_blank" rel="noopener" class="text-[#6d8fd6] hover:underline break-all">https://naver.me/5A3NVd1i</a>
+시간 : 10:00 ~ 13:00
+
+합주 끝나고 점심 식사 하면서 합주 리뷰나 공연 관련 의견 등 받을 생각입니다.
+중요한 일정 없으신 분들은 점심 식사 참여해</p>
+                  <button class="text-xs text-[#52525b] hover:text-[#a1a1aa] mt-1 transition-colors" onclick="this.nextElementSibling.classList.remove('hidden'); this.classList.add('hidden')">...더보기</button>
+                  <p class="text-sm text-[#71717a] mt-1 hidden">@everyone ,
+5/30 (토) 합주 **홍대 잼 합주실**에서 진행되는거 잊지 말아주세요!!
+사당 아닙니다! 홍대 잼 합주실 입니다!
+
+위치 : <a href="https://naver.me/5A3NVd1i" target="_blank" rel="noopener" class="text-[#6d8fd6] hover:underline break-all">https://naver.me/5A3NVd1i</a>
+시간 : 10:00 ~ 13:00
+
+합주 끝나고 점심 식사 하면서 합주 리뷰나 공연 관련 의견 등 받을 생각입니다.
+중요한 일정 없으신 분들은 점심 식사 참여해주세요!</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489896356062564352/index.html" class="hover:text-[#71717a] transition-colors"># 선곡-성현</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1184354841619873863/e8b45f0b759283d96ee7ca0a6c995305.png?size=1024" alt="naykim" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">naykim</span>
+                    <span class="text-xs text-[#3f3f46]">2026-05-26T02:12:48.617000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">성현곡도 인호곡처럼 이번주 합주까지 by the way 까지 열심히 연습하고 그동안 후보곡 더 받아서 일요일에 회의할까요?</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489939250999853197/index.html" class="hover:text-[#71717a] transition-colors"># 공지-소통가능방</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">령</span>
+                    <span class="text-xs text-[#3f3f46]">2026-04-10T00:45:36.446000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">🗓️ 2차 합주 중간 공지 🗓️
+현재 투표 참여한 8명 모두 가능한 날짜는 4/19(일) 13:00-20:00 입니다.
+
+&lt;@351687443264569345&gt; , 해당 날짜에 불가능한 시간 알려주세요!</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489939250999853197/index.html" class="hover:text-[#71717a] transition-colors"># 공지-소통가능방</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1184354841619873863/e8b45f0b759283d96ee7ca0a6c995305.png?size=1024" alt="naykim" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">naykim</span>
+                    <span class="text-xs text-[#3f3f46]">2026-04-12T07:27:20.733000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">[두번째 합주 공지]
+드림합주실 사당1호점 c룸
+4월 19일 일요일 17-20시
+
+설령이가 지금 해외라 상의 후 제가 대신 예약했습니다
+다른 방은 시간이 다 차서 정원 7명인 c룸으로 예약했어요 인원 추가해서 시간당 19,000원입니다 새로운 곳 한번 가봐용</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489939250999853197/index.html" class="hover:text-[#71717a] transition-colors"># 공지-소통가능방</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">령</span>
+                    <span class="text-xs text-[#3f3f46]">2026-04-19T14:01:59.584000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">안녕하세요 여러분~~ 오늘 합주는 잘 진행이 되셨는지요~!~!
+다름이 아니라 공연 일정과 다음 합주실 예약에 대해 논의하는 시간이 필요할 것 같아 공지를 작성하게 되었습니다.
+
+안건은 다음과 같습니다.
+1. 합주 일정 &amp; 합주실 결정
+2. 공연 일정</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489939250999853197/index.html" class="hover:text-[#71717a] transition-colors"># 공지-소통가능방</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">령</span>
+                    <span class="text-xs text-[#3f3f46]">2026-04-19T14:04:25.203000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">.
+.
+**1. 합주 일정 &amp; 합주실 결정**
+합주 일정은 고정 스케쥴로 진행하는 것이 좋을 것 같습니다.
+     -&gt; 서로 가능한 날 모이기 X / **합주 하는 날은 스케쥴 비워두기 O**
+매번 다음 합주 일정을 투표로 정할 수도 있지만, 각자 스케쥴에 맞춰 일정을 정하는게 쉽지 않을 것 같습니다..!
+그래서 합주 하는 날을 고정해두고, 당일 오전 스</p>
+                  <button class="text-xs text-[#52525b] hover:text-[#a1a1aa] mt-1 transition-colors" onclick="this.nextElementSibling.classList.remove('hidden'); this.classList.add('hidden')">...더보기</button>
+                  <p class="text-sm text-[#71717a] mt-1 hidden">.
+.
+**1. 합주 일정 &amp; 합주실 결정**
+합주 일정은 고정 스케쥴로 진행하는 것이 좋을 것 같습니다.
+     -&gt; 서로 가능한 날 모이기 X / **합주 하는 날은 스케쥴 비워두기 O**
+매번 다음 합주 일정을 투표로 정할 수도 있지만, 각자 스케쥴에 맞춰 일정을 정하는게 쉽지 않을 것 같습니다..!
+그래서 합주 하는 날을 고정해두고, 당일 오전 스케쥴은 합주에 참여할 수 있도록 가급적 조정 부탁 드립니다.
+조정할 수 없는 스케쥴이 있는 경우 미리 말씀해주세요. 해당 경우는 합주 일자 투표를 진행하도록 하겠습니다.
+
+**-1. 합주 일정**
+6월(~6/27)까지는 격주 1회.
+이후 공연 전까지는 매주 1회.
+
+우선 위 일정을 바탕으로 6월까지의 예약을 미리 진행 하려고 합니다.
+(보통 2,3일 전까지는 100% 취소가 가능하기 때문에 미리 예약해두려고 합니다)
+5,6월부터 매주 합주가 필요한 경우 추가 예약하도록 하겠습니다.
+
+
+**-2. 합주실**
+우선은 현재까지 후보로 나온 합주실 중에 예약을 진행하고,
+더 좋은 합주실이 나오면 예약을 변경하도록 하겠습니다.
+
+위 내용에 대해 각자 투표 부탁드립니다. 
+의견 있으신 분은 스레드로 의견 남겨주세요.</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489939250999853197/index.html" class="hover:text-[#71717a] transition-colors"># 공지-소통가능방</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">령</span>
+                    <span class="text-xs text-[#3f3f46]">2026-04-19T15:47:05.122000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">@everyone ,
+1번 안건의 경우 내일까지 (화요일) 투표를 받고 합주실 예약 하도록 하겠습니다. 다들 화요일까지 투표 및 의견 작성 완료해주세요.
+
+2번 안건의 경우 이번주 목요일까지 논의 진행하도록 하도록 하겠습니다. 목요일까지 대략적인 공연 일정이 결정될 수 있도록 모두 의견 부탁드립니다.</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489939250999853197/index.html" class="hover:text-[#71717a] transition-colors"># 공지-소통가능방</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">령</span>
+                    <span class="text-xs text-[#3f3f46]">2026-04-22T08:14:11.110000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">⭐ 합주실 예약 관련 공지 ⭐
+
+@everyone ,
+어제까지 합주실 위치 및 합주 시간 투표를 진행하였습니다.
+다수결 의사 결정을 진행할 수 있는 투표 결과라고 생각되어 투표 기간 연장 없이 공지하도록 하겠습니다.
+
+합주 시간 : 토요일 오전 (10~13)
+합주 위치 : 사당 드림합주실
+금액 : 시간 당 21,000원
+합주실 예약 일정 : 5/2(토)부터</p>
+                  <button class="text-xs text-[#52525b] hover:text-[#a1a1aa] mt-1 transition-colors" onclick="this.nextElementSibling.classList.remove('hidden'); this.classList.add('hidden')">...더보기</button>
+                  <p class="text-sm text-[#71717a] mt-1 hidden">⭐ 합주실 예약 관련 공지 ⭐
+
+@everyone ,
+어제까지 합주실 위치 및 합주 시간 투표를 진행하였습니다.
+다수결 의사 결정을 진행할 수 있는 투표 결과라고 생각되어 투표 기간 연장 없이 공지하도록 하겠습니다.
+
+합주 시간 : 토요일 오전 (10~13)
+합주 위치 : 사당 드림합주실
+금액 : 시간 당 21,000원
+합주실 예약 일정 : 5/2(토)부터 6월말까지 격주 진행.
+로 진행하려 했으나
+
+드림 합주실의 경우 저렴한 방 (17,000-21,000)은 6월까지 오전 시간 마감이며,
+조금 더 금액 대가 있는 방 (25,000-27,000)은 6월까지 띄엄띄엄 예약이 가능합니다.
+
+시간 당 21,000-27,000 방도 괜찮으시다면, 드림합주실 사당 1,2호 점을 잘 섞어서 예약을 진행하도록 하겠습니다.
+기존에 예상한 금액보다 좀 더 높은 방을 예약 해야 하기 때문에 이 부분에 대해서 오늘 자정까지만 투표 받도록 하겠습니다.
+투표 내용은 아래와 같습니다.
+-1. 드림 합주실 찬성 (21,000 - 27,000 방 중 토요일 오전 가능한 방 예약)
+-2. 홍대 그라운드 합주실 섞어서 예약 (17,000-18,000)
+-3. 홍대 그라운드 합주실만 예약
+
+해당 투표는 정확히 오늘 자정까지만 받을 예정이고, 투표에 참여하신 분들 의견으로만 예약 진행하겠습니다.
+모두 투표 부탁드려요!!</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489939250999853197/index.html" class="hover:text-[#71717a] transition-colors"># 공지-소통가능방</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">령</span>
+                    <span class="text-xs text-[#3f3f46]">2026-04-24T01:42:44.589000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">⭐️ 합주실 예약 공지 ⭐️
+
+@everyone 
+공지 확인 후 ✅이모티콘 눌러주세요.
+
+현재까지 투표 완료된 내역 정리 드립니다.
+- 합주 위치 : 사당 드림합주실
+- 합주 시간 : 토요일 오전 (10:00-13:00)
+- 드림 합주실 예약 시 21,000-27,000 방 사이에서 가능한 시간대 예약.
+
+6월 말까지 2주에 한번 합주 진행할 계획입니다. </p>
+                  <button class="text-xs text-[#52525b] hover:text-[#a1a1aa] mt-1 transition-colors" onclick="this.nextElementSibling.classList.remove('hidden'); this.classList.add('hidden')">...더보기</button>
+                  <p class="text-sm text-[#71717a] mt-1 hidden">⭐️ 합주실 예약 공지 ⭐️
+
+@everyone 
+공지 확인 후 ✅이모티콘 눌러주세요.
+
+현재까지 투표 완료된 내역 정리 드립니다.
+- 합주 위치 : 사당 드림합주실
+- 합주 시간 : 토요일 오전 (10:00-13:00)
+- 드림 합주실 예약 시 21,000-27,000 방 사이에서 가능한 시간대 예약.
+
+6월 말까지 2주에 한번 합주 진행할 계획입니다. 따라서 5/2, 5/16, 5/30, 6/13, 6/27 총 5건 예약이 필요합니다.
+
+이 중 5/2, 5/16 예약의 경우 남은 방이 많지 않아 S룸 (시간 당 23,000)을 미리 예약 하였습니다. 이 부분은 카카오톡으로 정산하도록 하겠습니다.
+
+나머지 예약(5/30, 6/13, 6/27)은 밴드 활동비를 통해 예약 할 계획입니다.
+
+밴드 활동비의 경우 매월 1일 인당 4만원씩 모으는 것으로 생각중입니다.
+해당 금액은 합주실 예약, 공연 장소 대관으로만 사용될 계획입니다. 
+밴드 활동비의 경우 오늘 저녁에 추가 공지 올리도록 하겠습니다.</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489977686343417988/index.html" class="hover:text-[#71717a] transition-colors"># 합주영상-사진</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1113288636260175973/f6e4b4eaffb60ee021f9026915361c17.png?size=1024" alt="sujileelea" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">sujileelea</span>
+                    <span class="text-xs text-[#3f3f46]">2026-05-19T08:04:12.525000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">2026-05-16 합주
+<a href="https://youtube.com/playlist?list=PLY4MoWqeWEl4bxqGOMT57OCOFxxE9Pu1Z&amp;si=FyH-51Bk8VaHuyGp" target="_blank" rel="noopener" class="text-[#6d8fd6] hover:underline break-all">https://youtube.com/playlist?list=PLY4MoWqeWEl4bxqGOMT57OCOFxxE9Pu1Z&amp;si=FyH-51Bk8VaHuyGp</a></p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489895992047308902/index.html" class="hover:text-[#71717a] transition-colors"># 공지방</a>
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <a href="/wild-rush-archive/threads/1506186223046103080/index.html" class="hover:text-[#71717a] transition-colors">🧵 club ff 대관</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1113288636260175973/f6e4b4eaffb60ee021f9026915361c17.png?size=1024" alt="sujileelea" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">sujileelea</span>
+                    <span class="text-xs text-[#3f3f46]">2026-05-19T07:04:04.817000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">1시간이 추가된다면 준비시간으로 쓰일 것 같은데 세션분들 의견이 중요할 것 같아요!</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1501077542592057374/index.html" class="hover:text-[#71717a] transition-colors"># 💸회비-관리</a>
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <a href="/wild-rush-archive/threads/1501141280477024308/index.html" class="hover:text-[#71717a] transition-colors">🧵 벌금 논의 스레드</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1184354841619873863/e8b45f0b759283d96ee7ca0a6c995305.png?size=1024" alt="naykim" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">naykim</span>
+                    <span class="text-xs text-[#3f3f46]">2026-05-05T12:18:27.902000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">지각: 기본적으로는 양심적으로 10시 전 도착 지키고, 10분까지는 봐준다 치고, 10시11분00초부터 다음 합주에 커피 한잔씩 먹을 수 있게 15000원 벌금 어떤가요
+합주리뷰는 다른 의견에 동의할수도 있고 공유할 만큼의 의견이 없을수도 있으니 필수일 필요는 없는거 같음</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489939250999853197/index.html" class="hover:text-[#71717a] transition-colors"># 공지-소통가능방</a>
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <a href="/wild-rush-archive/threads/1491744892379205702/index.html" class="hover:text-[#71717a] transition-colors">🧵 합주실 목록 (인당 1개 추천)</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1113288636260175973/f6e4b4eaffb60ee021f9026915361c17.png?size=1024" alt="sujileelea" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">sujileelea</span>
+                    <span class="text-xs text-[#3f3f46]">2026-04-12T07:02:10.625000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">저희 빨리 예약하는게 좋을듯 합니다 &lt;@1489894876781875350&gt;</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489939250999853197/index.html" class="hover:text-[#71717a] transition-colors"># 공지-소통가능방</a>
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <a href="/wild-rush-archive/threads/1491744892379205702/index.html" class="hover:text-[#71717a] transition-colors">🧵 합주실 목록 (인당 1개 추천)</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/544889245740040202/ca5bb0101f8d71028bb8c6010ab1ac77.png?size=1024" alt="서정윤" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">서정윤</span>
+                    <span class="text-xs text-[#3f3f46]">2026-04-11T06:43:19.037000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">&lt;@1489894876781875350&gt; 저희 합주실 예약을 확정해야할 것 같습니다~~</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489939250999853197/index.html" class="hover:text-[#71717a] transition-colors"># 공지-소통가능방</a>
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <a href="/wild-rush-archive/threads/1491744892379205702/index.html" class="hover:text-[#71717a] transition-colors">🧵 합주실 목록 (인당 1개 추천)</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1113288636260175973/f6e4b4eaffb60ee021f9026915361c17.png?size=1024" alt="sujileelea" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">sujileelea</span>
+                    <span class="text-xs text-[#3f3f46]">2026-04-10T09:51:12.757000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">여기 인기 많아서 예약하려면 지금 해야할 것 같아요</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489939250999853197/index.html" class="hover:text-[#71717a] transition-colors"># 공지-소통가능방</a>
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <a href="/wild-rush-archive/threads/1490584673028411543/index.html" class="hover:text-[#71717a] transition-colors">🧵 팀 별 확정 곡</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1184354841619873863/e8b45f0b759283d96ee7ca0a6c995305.png?size=1024" alt="naykim" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">naykim</span>
+                    <span class="text-xs text-[#3f3f46]">2026-04-08T14:10:02.399000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">[성현네]
+
+1. 다음 합주 ) 몽유병 - 로맨틱펀치
+2. 다다음 합주) 토요일밤이 좋아 - 로맨틱펀치</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489939250999853197/index.html" class="hover:text-[#71717a] transition-colors"># 공지-소통가능방</a>
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <a href="/wild-rush-archive/threads/1490584673028411543/index.html" class="hover:text-[#71717a] transition-colors">🧵 팀 별 확정 곡</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1113288636260175973/f6e4b4eaffb60ee021f9026915361c17.png?size=1024" alt="sujileelea" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">sujileelea</span>
+                    <span class="text-xs text-[#3f3f46]">2026-04-07T13:38:18.927000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">**[수지네]**
+
+1. 다음 합주 ) 한로로 - 입춘
+2. 다다음 합주) 더발룬티어스 - Summer</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489939250999853197/index.html" class="hover:text-[#71717a] transition-colors"># 공지-소통가능방</a>
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <a href="/wild-rush-archive/threads/1490584673028411543/index.html" class="hover:text-[#71717a] transition-colors">🧵 팀 별 확정 곡</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/739022883791306802/5f5956e4bafe40c42606c10466a9ba62.png?size=1024" alt="inho" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">inho</span>
+                    <span class="text-xs text-[#3f3f46]">2026-04-07T13:31:40.460000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">**[인호네]**
+
+1. 다음 합주 ) far away - 라쿠나
+2. 다다음 합주) 막걸리나 - 버스커버스커</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489939250999853197/index.html" class="hover:text-[#71717a] transition-colors"># 공지-소통가능방</a>
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <a href="/wild-rush-archive/threads/1495424838729203783/index.html" class="hover:text-[#71717a] transition-colors">🧵 -1. 합주 일정&amp;위치</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">령</span>
+                    <span class="text-xs text-[#3f3f46]">2026-04-19T14:07:01.133000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">-1. 합주 일정&amp;위치</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489965483817046147/index.html" class="hover:text-[#71717a] transition-colors"># 일반</a>
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <a href="/wild-rush-archive/threads/1498499508030672917/index.html" class="hover:text-[#71717a] transition-colors">🧵 혹시 나머지 선곡은 언제 회의하나요????</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1184354841619873863/e8b45f0b759283d96ee7ca0a6c995305.png?size=1024" alt="naykim" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">naykim</span>
+                    <span class="text-xs text-[#3f3f46]">2026-04-28T01:45:21.359000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">토요일 밤도 갠춘</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489965483817046147/index.html" class="hover:text-[#71717a] transition-colors"># 일반</a>
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <a href="/wild-rush-archive/threads/1498499508030672917/index.html" class="hover:text-[#71717a] transition-colors">🧵 혹시 나머지 선곡은 언제 회의하나요????</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1184354841619873863/e8b45f0b759283d96ee7ca0a6c995305.png?size=1024" alt="naykim" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">naykim</span>
+                    <span class="text-xs text-[#3f3f46]">2026-04-28T01:44:23.507000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">일요일에 할까여</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489965483817046147/index.html" class="hover:text-[#71717a] transition-colors"># 일반</a>
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <a href="/wild-rush-archive/threads/1506930006587211818/index.html" class="hover:text-[#71717a] transition-colors">🧵 곡 선정 현황</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1184354841619873863/e8b45f0b759283d96ee7ca0a6c995305.png?size=1024" alt="naykim" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">naykim</span>
+                    <span class="text-xs text-[#3f3f46]">2026-05-21T08:40:07.203000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">앵콜곡 합주때 정하는거 좋아요~~
+팀별 최종 선곡 회의는 월요일 저녁 어떤가요?? 석가탄신일 대체휴일입니당</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489896356062564352/index.html" class="hover:text-[#71717a] transition-colors"># 선곡-성현</a>
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <a href="/wild-rush-archive/threads/1490599627056222338/index.html" class="hover:text-[#71717a] transition-colors">🧵 선곡 회의 시간 잡기</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1184354841619873863/e8b45f0b759283d96ee7ca0a6c995305.png?size=1024" alt="naykim" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">naykim</span>
+                    <span class="text-xs text-[#3f3f46]">2026-04-08T01:57:10.589000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">&lt;@351687443264569345&gt; 일정 나오는대로 알려주세요!</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489896356062564352/index.html" class="hover:text-[#71717a] transition-colors"># 선곡-성현</a>
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <a href="/wild-rush-archive/threads/1490599627056222338/index.html" class="hover:text-[#71717a] transition-colors">🧵 선곡 회의 시간 잡기</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1184354841619873863/e8b45f0b759283d96ee7ca0a6c995305.png?size=1024" alt="naykim" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">naykim</span>
+                    <span class="text-xs text-[#3f3f46]">2026-04-06T14:27:36.282000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">인호-수지-성현 순으로 회의 진행할거 같아염 수지곡 회의 끝나고 너무 늦으면 성현곡은 수요일에 하기로!</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489896356062564352/index.html" class="hover:text-[#71717a] transition-colors"># 선곡-성현</a>
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <a href="/wild-rush-archive/threads/1490599627056222338/index.html" class="hover:text-[#71717a] transition-colors">🧵 선곡 회의 시간 잡기</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1184354841619873863/e8b45f0b759283d96ee7ca0a6c995305.png?size=1024" alt="naykim" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">naykim</span>
+                    <span class="text-xs text-[#3f3f46]">2026-04-06T11:05:53.674000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">인호곡 회의가 9시니까, 가능한대로 바로 들어와주세염~~</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489896356062564352/index.html" class="hover:text-[#71717a] transition-colors"># 선곡-성현</a>
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <a href="/wild-rush-archive/threads/1490599627056222338/index.html" class="hover:text-[#71717a] transition-colors">🧵 선곡 회의 시간 잡기</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/351687443264569345/07bc248dc6620642814f43c488664fbd.png?size=1024" alt="spark" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">spark</span>
+                    <span class="text-xs text-[#3f3f46]">2026-04-06T11:03:01.133000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">내일! 저는 내일저녁에 업무일정이 끝나면.. 가능시간은 열시반은 넘을거같아요&#34;ㅠㅠㅠ</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489896356062564352/index.html" class="hover:text-[#71717a] transition-colors"># 선곡-성현</a>
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <a href="/wild-rush-archive/threads/1490599627056222338/index.html" class="hover:text-[#71717a] transition-colors">🧵 선곡 회의 시간 잡기</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1184354841619873863/e8b45f0b759283d96ee7ca0a6c995305.png?size=1024" alt="naykim" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">naykim</span>
+                    <span class="text-xs text-[#3f3f46]">2026-04-06T06:32:37.113000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">선곡 회의 시간 잡기</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1489896356062564352/index.html" class="hover:text-[#71717a] transition-colors"># 선곡-성현</a>
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <a href="/wild-rush-archive/threads/1490599627056222338/index.html" class="hover:text-[#71717a] transition-colors">🧵 선곡 회의 시간 잡기</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1184354841619873863/e8b45f0b759283d96ee7ca0a6c995305.png?size=1024" alt="naykim" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">naykim</span>
+                    <span class="text-xs text-[#3f3f46]">2026-04-06T06:31:37.365000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">한명씩 태그하려고보니 보컬빼고 세션 인원 전부 같아서 인호방에서 시간 정하고,
+인호곡 회의하고 바로 성현곡 회의하면 될거같아염</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          
+        </div>
+
+        <div class="text-center text-xs text-[#3f3f46] py-8 border-t border-[#1f1f1f] mt-8">
+          마지막 동기화: 2026-05-27T05:32:32.260343 UTC
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var toggle = document.getElementById('sidebar-toggle');
+      var sidebar = document.getElementById('sidebar');
+      var overlay = document.getElementById('sidebar-overlay');
+      if (toggle && sidebar && overlay) {
+        toggle.addEventListener('click', function() {
+          sidebar.classList.toggle('-translate-x-full');
+          sidebar.classList.toggle('translate-x-0');
+          overlay.classList.toggle('hidden');
+        });
+        overlay.addEventListener('click', function() {
+          sidebar.classList.add('-translate-x-full');
+          sidebar.classList.remove('translate-x-0');
+          overlay.classList.add('hidden');
+        });
+      }
+    });
+  </script>
+</body>
+</html>

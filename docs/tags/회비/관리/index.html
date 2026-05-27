@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>#회비/관리 — 와일드러시 Archive</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } }
+    }
+  </script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+    .sidebar-scroll { scrollbar-width: thin; }
+  </style>
+</head>
+<body class="bg-[#0a0a0f] text-[#e0e0e6]">
+
+  <!-- Mobile Top Bar -->
+  <div class="lg:hidden flex items-center justify-between px-4 py-3 border-b border-[#1f1f1f] bg-[#0d0d14]">
+    <button id="sidebar-toggle" class="p-2 rounded-lg hover:bg-[#1a1a24] transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </button>
+    <span class="text-sm font-medium text-white"># 회비/관리</span>
+    <div class="w-8"></div>
+  </div>
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden"></div>
+
+  <div class="flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-64 flex-shrink-0 flex flex-col bg-[#0d0d14] border-r border-[#1f1f1f] overflow-hidden fixed inset-y-0 left-0 z-50 transform -translate-x-full lg:relative lg:translate-x-0 transition-transform duration-200">
+      <div class="px-4 py-4 border-b border-[#1f1f1f]">
+        <div class="flex items-center gap-2.5">
+          
+          <img src="https://cdn.discordapp.com/icons/1489894102827794452/0593a61e9794209cfe7ae37253419bc7.png?size=1024" alt="와일드러시" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+          
+          <div class="min-w-0">
+            <p class="text-sm font-semibold text-white truncate">와일드러시</p>
+            <p class="text-[10px] text-[#52525b]">Discord Archive</p>
+          </div>
+        </div>
+      </div>
+      <nav class="flex-1 overflow-y-auto sidebar-scroll py-2">
+        
+        <div class="mb-1">
+          <div class="px-4 py-1.5 flex items-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#3f3f46] flex-shrink-0"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+            <span class="text-[10px] font-semibold text-[#52525b] uppercase tracking-widest">없음</span>
+          </div>
+          
+          <a href="/wild-rush-archive/channels/1489895992047308902/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">공지방</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1489896035802153051/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">선곡-수지</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1489896325741805608/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">선곡-인호</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1489896356062564352/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">선곡-성현</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1489939250999853197/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">공지-소통가능방</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1489965483817046147/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">일반</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1489977686343417988/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">합주영상-사진</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1490699203402535082/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">🎧노래-추천🎧</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1491433466947047454/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">🎸기타-방</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1501077542592057374/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">💸회비-관리</span>
+          </a>
+          
+          <a href="/wild-rush-archive/channels/1501080971733237770/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">🖐️합주-리뷰</span>
+          </a>
+          
+        </div>
+        
+        <div class="mb-1">
+          <div class="px-4 py-1.5 flex items-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#3f3f46] flex-shrink-0"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+            <span class="text-[10px] font-semibold text-[#52525b] uppercase tracking-widest">🎵선곡하시오</span>
+          </div>
+          
+          <a href="/wild-rush-archive/channels/1507983211345481729/index.html" class="group flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg hover:bg-[#1a1a24] transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="text-xs text-[#71717a] group-hover:text-[#d4d4d8] truncate transition-colors">선곡-앵콜곡</span>
+          </a>
+          
+        </div>
+        
+        <div class="mt-4 border-t border-[#1f1f1f] pt-2">
+          <a href="/wild-rush-archive/tags/index.html" class="flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-lg bg-[#1a1a24] cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d4d4d8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+            <span class="text-xs text-white">태그</span>
+          </a>
+        </div>
+      </nav>
+      <div class="px-4 py-3 border-t border-[#1f1f1f]">
+        <p class="text-[10px] text-[#3f3f46]">마지막 동기화<br>2026-05-27T05:32:32.271521 UTC</p>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto flex flex-col">
+      <div class="flex-1 max-w-5xl mx-auto px-4 lg:px-8 py-6 lg:py-8">
+
+        <nav class="flex items-center gap-2 text-sm text-[#52525b] mb-6">
+          <a href="/wild-rush-archive/index.html" class="hover:text-[#a1a1aa] transition-colors">와일드러시</a>
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <a href="/wild-rush-archive/tags/index.html" class="hover:text-[#a1a1aa] transition-colors">태그</a>
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <span class="text-[#d4d4d8]"># 회비/관리</span>
+        </nav>
+
+        <div class="mb-8 pb-6 border-b border-[#1f1f1f]">
+          <div class="flex items-center gap-2 mb-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#52525b]"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+            <h1 class="text-xl font-semibold text-white tracking-tight"># 회비/관리</h1>
+          </div>
+          <p class="text-sm text-[#52525b]">2개 메시지</p>
+        </div>
+
+        <div class="space-y-3">
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1501077542592057374/index.html" class="hover:text-[#71717a] transition-colors"># 💸회비-관리</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">령</span>
+                    <span class="text-xs text-[#3f3f46]">2026-05-05T08:08:42.124000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">@everyone 
+
+회비-관리 채널이 생성 되었습니다.
+
+해당 채널은 회비 사용 및 관리를 공지하는 채널입니다.
+
+계좌 : 3333292544412 카카오뱅크 (모임통장)
+회비 : 매 월 50,000원.
+입금 규칙 : 매 월 1일 모임 통장 직접 입금.
+
+⭐ 계좌 개설
+카카오뱅크 모임통장 &#34;와일드러시 모임통장&#34;을 개설 하였습니다.
+각자 개인 톡으로 모임통</p>
+                  <button class="text-xs text-[#52525b] hover:text-[#a1a1aa] mt-1 transition-colors" onclick="this.nextElementSibling.classList.remove('hidden'); this.classList.add('hidden')">...더보기</button>
+                  <p class="text-sm text-[#71717a] mt-1 hidden">@everyone 
+
+회비-관리 채널이 생성 되었습니다.
+
+해당 채널은 회비 사용 및 관리를 공지하는 채널입니다.
+
+계좌 : 3333292544412 카카오뱅크 (모임통장)
+회비 : 매 월 50,000원.
+입금 규칙 : 매 월 1일 모임 통장 직접 입금.
+
+⭐ 계좌 개설
+카카오뱅크 모임통장 &#34;와일드러시 모임통장&#34;을 개설 하였습니다.
+각자 개인 톡으로 모임통장 참여 링크를 보내드렸습니다.
+해당 링크로 모임 통장에 참여해주세요.
+
+⭐ 회비 금액 설정
+현재는 합주를 격주로 진행하지만 공연이 다가오면 매주 진행 할 예정이며, 남은 회비는 공연장 예약비에 보탤 계획입니다.
+1 시간에 25,000인 합주실을 기준으로 4회 * 3시간 을 예약하면 총 300,000이며, 이를 9명으로 나눌 시 인 당 34,000입니다.
+회비는 계산 된 금액에 여유분 16,000을 더해 50,000원으로 고려중입니다.
+회비 관련해서 의견 있으신 분 &#34;회비 논의 스레드&#34;에 자유롭게 남겨주세요!!!
+
+⭐ 회비 사용처
+1. 합주실 예약
+2. 공연장 예약
+회비는 위에 적힌 목적으로만 사용 가능합니다.
+이 외의 회식비, 음료비 등은 회비로 결제할 수 없습니다.
+
+⭐ 회비 사용 방법
+기본적으로 회비는 예약에만 사용되기 때문에 매니저인 제가 각종 예약, 결제를 진행합니다.
+&#34;회비 사용처&#34;에 명시된 항목 외에 회비 사용이 필요한 일이 있다면, 매니저 및 구성원 허락 후 사용하도록 하겠습니다.
+
+⭐ 모임 통장 비밀번호
+비밀번호는 공지로 적어놔도 상관없을 것 같지만 우선은 저만 알고 있도록 하겠습니다.
+
+⭐ 회비 제출 인원
+동아리 회비의 대부분은 합주실 예약에 사용됩니다.
+따라서 합주에 참여하지 않는 매니저는 회비를 제출하지 않습니다.</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+            
+            
+          
+          
+          <div class="flex gap-3 p-4 bg-[#111118] border border-[#1f1f1f] rounded-xl hover:border-[#3f3f46] transition-colors">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 text-xs text-[#3f3f46] mb-2">
+                
+                <a href="/wild-rush-archive/channels/1501077542592057374/index.html" class="hover:text-[#71717a] transition-colors"># 💸회비-관리</a>
+                
+              </div>
+              <div class="flex gap-3">
+                
+                <img src="https://cdn.discordapp.com/avatars/1489894876781875350/8569adcbd36c70a7578c017bf5604ea5.png?size=1024" alt="령" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-medium text-[#d4d4d8]">령</span>
+                    <span class="text-xs text-[#3f3f46]">2026-05-05T08:13:21.922000+00:00</span>
+                  </div>
+                  
+                  
+                  <p class="text-sm text-[#71717a] mt-1">📢 5월 회비 안내 📢
+
+매 월 1일 회비 입금을 진행하려고 합니다.
+다만, 이번 달은 이미 1일이 지나버려 따로 입금을 받고자 합니다.
+
+바로 위 스레드인 &#34;회비 논의 스레드&#34;는 이번주 금요일까지 오픈 됩니다.
+해당 스레드에 회비 금액, 사용처 등 회비와 관련된 모든 의견을 남겨주세요.
+
+토요일 오전, 최종 결정된 회비 금액으로 5월달 입금 공지를 올리도</p>
+                  <button class="text-xs text-[#52525b] hover:text-[#a1a1aa] mt-1 transition-colors" onclick="this.nextElementSibling.classList.remove('hidden'); this.classList.add('hidden')">...더보기</button>
+                  <p class="text-sm text-[#71717a] mt-1 hidden">📢 5월 회비 안내 📢
+
+매 월 1일 회비 입금을 진행하려고 합니다.
+다만, 이번 달은 이미 1일이 지나버려 따로 입금을 받고자 합니다.
+
+바로 위 스레드인 &#34;회비 논의 스레드&#34;는 이번주 금요일까지 오픈 됩니다.
+해당 스레드에 회비 금액, 사용처 등 회비와 관련된 모든 의견을 남겨주세요.
+
+토요일 오전, 최종 결정된 회비 금액으로 5월달 입금 공지를 올리도록 하겠습니다.</p>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+        </div>
+
+        <div class="text-center text-xs text-[#3f3f46] py-8 border-t border-[#1f1f1f] mt-8">
+          마지막 동기화: 2026-05-27T05:32:32.271521 UTC
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var toggle = document.getElementById('sidebar-toggle');
+      var sidebar = document.getElementById('sidebar');
+      var overlay = document.getElementById('sidebar-overlay');
+      if (toggle && sidebar && overlay) {
+        toggle.addEventListener('click', function() {
+          sidebar.classList.toggle('-translate-x-full');
+          sidebar.classList.toggle('translate-x-0');
+          overlay.classList.toggle('hidden');
+        });
+        overlay.addEventListener('click', function() {
+          sidebar.classList.add('-translate-x-full');
+          sidebar.classList.remove('translate-x-0');
+          overlay.classList.add('hidden');
+        });
+      }
+    });
+  </script>
+</body>
+</html>

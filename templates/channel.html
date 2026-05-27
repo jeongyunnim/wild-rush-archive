@@ -126,6 +126,83 @@
           </div>
         </div>
 
+        <!-- Topics Section -->
+        {% if channel_summary and channel_summary.topics %}
+        <div class="mb-8">
+          <div class="flex items-center gap-2 mb-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#52525b]"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <span class="text-xs font-medium text-[#52525b] uppercase tracking-widest">토픽</span>
+            <span class="text-xs text-[#3f3f46]">{{ channel_summary.topics|length }}</span>
+          </div>
+          <div class="grid gap-2">
+            {% for topic in channel_summary.topics %}
+            <div class="bg-[#111118] border border-[#1f1f1f] rounded-xl overflow-hidden">
+              <button onclick="var body=this.nextElementSibling; var arrow=this.querySelector('.topic-arrow'); body.classList.toggle('hidden'); arrow.classList.toggle('rotate-90');"
+                      class="w-full flex items-center justify-between p-4 text-left hover:bg-[#16161e] transition-colors">
+                <div class="flex items-center gap-3 min-w-0">
+                  {% if topic.importance == 'high' %}
+                  <span class="w-2 h-2 rounded-full bg-[#f97316] flex-shrink-0"></span>
+                  {% elif topic.importance == 'medium' %}
+                  <span class="w-2 h-2 rounded-full bg-[#3b82f6] flex-shrink-0"></span>
+                  {% else %}
+                  <span class="w-2 h-2 rounded-full bg-[#52525b] flex-shrink-0"></span>
+                  {% endif %}
+                  <div class="min-w-0">
+                    <p class="text-sm font-medium text-[#d4d4d8]">{{ topic.name }}</p>
+                    {% if topic.date_range %}
+                    <p class="text-[10px] text-[#3f3f46] mt-0.5">{{ topic.date_range }}</p>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 flex-shrink-0">
+                  {% if topic.decision %}
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#1a2e1a] text-[10px] text-[#22c55e]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    결정
+                  </span>
+                  {% endif %}
+                  <span class="text-xs text-[#3f3f46]">{{ topic.message_ids|length }}개</span>
+                  <svg class="topic-arrow text-[#3f3f46] transition-transform duration-150" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </div>
+              </button>
+              <div class="hidden border-t border-[#1f1f1f]">
+                <div class="p-4 space-y-3">
+                  <p class="text-sm text-[#a1a1aa] leading-relaxed">{{ topic.summary|linkify }}</p>
+                  {% if topic.decision %}
+                  <div class="flex items-start gap-2 p-3 bg-[#0d1a0d] border border-[#1a2e1a] rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 flex-shrink-0"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span class="text-xs text-[#22c55e]">{{ topic.decision }}</span>
+                  </div>
+                  {% endif %}
+                  {% if topic.message_ids %}
+                  <div class="space-y-1 pt-2 border-t border-[#1f1f1f]">
+                    <p class="text-[10px] text-[#3f3f46] uppercase tracking-widest mb-2">관련 메시지</p>
+                    {% for msg in channel.messages if msg.id in topic.message_ids %}
+                    <div class="flex gap-3 p-2 rounded-lg">
+                      {% if msg.author_avatar %}
+                      <img src="{{ msg.author_avatar }}" class="w-7 h-7 rounded-full object-cover mt-0.5 flex-shrink-0">
+                      {% else %}
+                      <div class="w-7 h-7 rounded-full bg-gradient-to-br from-[#4f46e5] to-[#7c3aed] flex items-center justify-center text-xs font-medium text-white flex-shrink-0 mt-0.5">{{ msg.author_name[0] }}</div>
+                      {% endif %}
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-baseline gap-2">
+                          <span class="text-xs font-medium text-[#d4d4d8]">{{ msg.author_name }}</span>
+                          <span class="text-[10px] text-[#3f3f46]">{{ msg.timestamp|datetime }}</span>
+                        </div>
+                        <p class="text-xs text-[#71717a] mt-0.5 leading-relaxed">{{ msg.content|linkify }}</p>
+                      </div>
+                    </div>
+                    {% endfor %}
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
         <!-- Threads Section -->
         {% if channel.threads %}
         <div class="mb-8">
@@ -166,8 +243,8 @@
             <span class="text-xs text-[#3f3f46]">{{ channel.messages|length }}</span>
           </div>
           <div class="space-y-1">
-            {% for msg in channel.messages[:30] %}
-            <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group">
+            {% for msg in channel.messages %}
+            <div class="flex gap-3 p-3 rounded-xl hover:bg-[#111118] transition-colors group {% if loop.index > 30 %}hidden msg-overflow{% endif %}"
               {% if msg.author_avatar %}
               <img src="{{ msg.author_avatar }}" alt="{{ msg.author_name }}" class="w-9 h-9 rounded-full object-cover mt-0.5 flex-shrink-0">
               {% else %}
@@ -181,11 +258,11 @@
                   <span class="text-xs text-[#3f3f46]">{{ msg.timestamp|datetime }}</span>
                 </div>
                 {% if msg.content|length > 200 %}
-                <p class="text-sm text-[#71717a] mt-1 leading-relaxed">{{ msg.content[:200] }}</p>
+                <p class="text-sm text-[#71717a] mt-1 leading-relaxed">{{ msg.content[:200]|linkify }}</p>
                 <button class="text-xs text-[#52525b] hover:text-[#a1a1aa] mt-1 transition-colors" onclick="this.nextElementSibling.classList.remove('hidden'); this.classList.add('hidden')">...더보기</button>
-                <p class="text-sm text-[#71717a] mt-1 leading-relaxed hidden">{{ msg.content }}</p>
+                <p class="text-sm text-[#71717a] mt-1 leading-relaxed hidden">{{ msg.content|linkify }}</p>
                 {% else %}
-                <p class="text-sm text-[#71717a] mt-1 leading-relaxed">{{ msg.content }}</p>
+                <p class="text-sm text-[#71717a] mt-1 leading-relaxed">{{ msg.content|linkify }}</p>
                 {% endif %}
                 {% if msg.attachments %}
                 <div class="flex flex-wrap gap-2 mt-2">
@@ -222,7 +299,10 @@
             {% endfor %}
           </div>
           {% if channel.messages|length > 30 %}
-          <p class="text-center text-xs text-[#3f3f46] py-4">+ {{ channel.messages|length - 30 }}개 더보기</p>
+          <button id="show-more-btn" onclick="document.querySelectorAll('.msg-overflow').forEach(function(el){el.classList.remove('hidden')}); this.classList.add('hidden');"
+                  class="w-full text-center text-xs text-[#6d8fd6] hover:text-[#a1a1aa] py-4 transition-colors cursor-pointer">
+            + {{ channel.messages|length - 30 }}개 더보기
+          </button>
           {% endif %}
         </div>
         {% endif %}

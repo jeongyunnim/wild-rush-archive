@@ -3,16 +3,29 @@
 import os
 import json
 import logging
+import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+from markupsafe import Markup, escape
 
 from .config import TEMPLATE_DIR, OUTPUT_DIR
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger(__name__)
+
+_URL_RE = re.compile(r'(https?://[^\s<>\"\)]+)')
+
+
+def _linkify(text):
+    escaped = str(escape(text))
+    result = _URL_RE.sub(
+        r'<a href="\1" target="_blank" rel="noopener" class="text-[#6d8fd6] hover:underline break-all">\1</a>',
+        escaped,
+    )
+    return Markup(result)
 
 
 def get_renderer():
@@ -23,6 +36,7 @@ def get_renderer():
     )
     env.filters["datetime"] = lambda s: datetime.fromisoformat(s).strftime("%Y-%m-%d %H:%M") if s else ""
     env.filters["shortdate"] = lambda s: datetime.fromisoformat(s).strftime("%m/%d") if s else ""
+    env.filters["linkify"] = _linkify
     return env
 
 
@@ -110,6 +124,11 @@ def render_site():
             log.info(f"Rendered: {th_path}")
 
     # --- Render tag index & detail pages ---
+    thread_to_channel: dict[str, str] = {}
+    for cid, ch_data in channels.items():
+        for thread in ch_data.get("threads", []):
+            thread_to_channel[thread["id"]] = cid
+
     all_tags: dict[str, list[tuple]] = {}
     for cid, ch_tags in tags.items():
         for src_type, msg_tags in ch_tags.items():
@@ -117,7 +136,11 @@ def render_site():
                 for tag in tag_list:
                     if tag not in all_tags:
                         all_tags[tag] = []
-                    all_tags[tag].append((cid if src_type == "channel" else None, msg_id, src_type))
+                    if src_type == "channel":
+                        all_tags[tag].append((cid, None, msg_id, src_type))
+                    else:
+                        resolved_cid = thread_to_channel.get(cid, cid)
+                        all_tags[tag].append((resolved_cid, cid, msg_id, src_type))
 
     # Tag index page
     env.filters["tag_count"] = lambda t: len(all_tags.get(t, []))
