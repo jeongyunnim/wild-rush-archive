@@ -92,10 +92,11 @@ def _load_existing() -> dict[str, Any]:
 
 async def crawl_guild(intents: discord.Intents) -> dict[str, Any]:
     result = {}
-    client = discord.Client(intents=intents)
+    client = discord.Client(intents=intents, chunk_guilds_at_startup=False)
 
     @client.event
     async def on_ready():
+        nonlocal result
         log.info(f"on_ready fired! Bot user: {client.user}")
         try:
             if not GUILD_ID:
